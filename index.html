@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<head>
+  <title>LTE Scanner</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+  <div style="margin:100px;">
+    <nav class="navbar navbar-inverse navbar-static-top">
+      <div class="container">
+        <a class="navbar-brand" href="/">LTE Scanner</a>
+        <ul class="nav navbar-nav">
+          <li class="active">
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/x">x</a>
+          </li>
+          <li>
+            <a href="/y">y</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <form class="form" class="fieldset" action="/action_page.php">
+      <label for="sf">Start frequency:</label>
+      <input type="text" id="sf" name="sf"><br><br>
+      <label for="ef">End frequency:</label>
+      <input type="text" id="ef" name="ef"><br>
+    </form>
+    <div class="jumbotron" style="padding:40px;">
+      <p><a id="startButton" class="btn btn-primary btn-lg" role="button">start</a></p>
+      <p><a class="btn btn-primary btn-lg" href="search" role="button">search</a></p>
+    </div>
+<table class="table" id="table">
+  <tr>
+    <th>oberator</th>
+    <th>id</th> 
+    <th>mcc/mnc</th>
+  </tr>
+  <tr id="cell">
+    <td id="1"></td>
+    <td id="2"></td> 
+    <td id="3"></td>
+  </tr>
+</table>
+  </div>
+  <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>
