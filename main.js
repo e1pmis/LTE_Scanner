@@ -4,25 +4,30 @@ let scanner = new Scanner();
 const app = express();
 const path = require("path");
 const router = express.Router();
-//var userid = require('userid');
-//r sudoUserId = userid.uid(process.env.SUDO_USER);
-//ocess.seteuid(sudoUserId);
-// Do things
+// const bodyParser = require('body-parser');
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.raw());
+
 router.get("/", async function (req, res) {
   res.sendFile(path.join(__dirname + "/index.html"));
-
-  //__dirname : It will resolve to your project folder.
 });
 
-router.get("/search", async function (req, res) {
-  // let output = await scanner.octo(req , res);
-  let cell = { mcc: '206', mnc: '01' }
-  res.send(cell);
+
+router.get("/getCells", async function (req, res) {
+  res.send(scanner.cells);
 });
+
 router.get("/script.js", async function (req, res) {
   res.sendFile("/home/ibra/kimo/java/script.js");
 });
 
+router.post("/submit", async function requestHandler(req, res) {
+  // console.log(req.body.ef);
+  // console.log(req.body.sf);
+  await scanner.search(796);
+  res.send();
+});
 // router.get('/sitemap',function(req,res){
 //   res.sendFile(path.join(__dirname+'/sitemap.html'));
 // });

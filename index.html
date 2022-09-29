@@ -27,19 +27,20 @@
         </ul>
       </div>
     </nav>
-    <form class="form" class="fieldset" action="/action_page.php">
+    <form id="theForm" class="form" class="fieldset" action="/submit" method="POST">
       <label for="sf">Start frequency:</label>
       <input type="text" id="sf" name="sf"><br><br>
       <label for="ef">End frequency:</label>
       <input type="text" id="ef" name="ef"><br>
+      <input type="submit" value="Submit"></input>
     </form>
     <div class="jumbotron" style="padding:40px;">
-      <p><a id="startButton" class="btn btn-primary btn-lg" role="button">start</a></p>
-      <p><a class="btn btn-primary btn-lg" href="search" role="button">search</a></p>
+      <p><a class="btn btn-primary btn-lg" role="button">search</a></p>
+      <p></p><a id="gcells" class="btn btn-primary btn-lg" role="button">previous</a></p>
     </div>
 <table class="table" id="table">
   <tr>
-    <th>oberator</th>
+    <th>Frequency</th>
     <th>id</th> 
     <th>mcc/mnc</th>
   </tr>
@@ -50,7 +51,7 @@
   </tr>
 </table>
   </div>
-  <script type="text/javascript" src="script.js"></script>
+  <script type="module" src="script.js" ></script>
 </body>
 
 </html>

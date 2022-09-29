@@ -1,39 +1,38 @@
 const Body = document.body;
+// let form = document.getElementById("theForm");
 
-async function test() {
-  setTimeout(window.alert("welcome Abdullah"), 5000);
-}
-test();
+// let submit = document.getElementById("submit");
+// submit.addEventListener("click", sub());
 
-let start = document.getElementById("startButton");
-start.addEventListener("click", go);
+// async function sub() {
+//   console.log("submit");
+//   console.log("submit");
+//   form.submit();
+//   form.reset();
+// }
 
-async function go() {
-  fetch("http://192.168.0.103:8080/search")
-    .then(function (response) {
-      return response.json();
-    })
+function getcells() {
+  fetch("http://192.168.0.103:8080/getCells")
+  .then(function (response) {
+    return response.json();
+  })
     .then(function (myJson) {
-      const table = document.getElementById("table");
-      var row = table.insertRow(0);
-
-      // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-      var cell1 = row.insertCell(0);
-      var cell2 = row.insertCell(1);
-
-      // Add some text to the new cells:
-      cell1.innerHTML = "vodafone";
-      cell2.innerHTML = "<ul class='ul li ol'><li>cellid</li><li>operting frequency</li><li>power</li></ul";
-    //   table.innerText = JSON.stringify(myJson);
       console.log(myJson);
+      const table = document.getElementById("table");
+      for (let cell of myJson) {
+        console.log(cell);
+        let row = table.insertRow(0);
+        let cell1 = row.insertCell(0);
+        let cell2 = row.insertCell(1);
+        cell1.innerHTML = `${cell.frequency}`;
+        cell2.innerHTML = `<ul class='ul li ol'><li>Cell id: ${cell.id} </li><li>Operting frequency: ${cell.frequency}</li><li>Cell type: ${cell.type}</li><li>Rx power level: ${cell.rxPowerLevel}</li><li>MCC: ${cell.mcc}</li><li>MNC: ${cell.mnc}</li></ul <p><a role='button'>BCCH</a></p>`;
+      }
     })
     .catch(function (error) {
       console.log("Error: " + error);
     });
-}
 
-function delay(time) {
-  return new Promise((resolve) => {
-    setTimeout(resolve(), time);
-  });
-}
+    
+  }
+  let getCells = document.getElementById("gcells");
+  getCells.addEventListener("click", getcells(),false);
