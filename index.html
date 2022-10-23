@@ -9,6 +9,8 @@
 
 </head>
 
+
+     
 <body>
   <div style="margin:100px;">
     <nav class="navbar navbar-inverse navbar-static-top">
@@ -29,29 +31,29 @@
     </nav>
     <form id="theForm" class="form" class="fieldset" action="/submit" method="POST">
       <label for="sf">Start frequency:</label>
-      <input type="text" id="sf" name="sf"><br><br>
+      <input name="sFreq" id="sf" type="text" value="796"><br>
       <label for="ef">End frequency:</label>
-      <input type="text" id="ef" name="ef"><br>
+      <input name="eFreq" id="ef" type="text" value="816"><br>
       <input type="submit" value="Submit"></input>
     </form>
     <div class="jumbotron" style="padding:40px;">
-      <p><a class="btn btn-primary btn-lg" role="button">search</a></p>
-      <p></p><a id="gcells" class="btn btn-primary btn-lg" role="button">previous</a></p>
+      <p><a id="reset" class="btn  btn-lg" role="button">reset</a></p>
+      <p></p><a id="gcells" class="btn  btn-lg" role="button">results</a></p>
+      <table class="table" id="table">
+        <tr>
+          <th>Frequency</th>
+          <th>id</th> 
+          <th>mcc/mnc</th>
+        </tr>
+        <tr id="cell">
+          <td id="1"></td>
+          <td id="2"></td> 
+          <td id="3"></td>
+        </tr>
+      </table>
+        </div>
+        <script type="module" src="script.js" ></script>
     </div>
-<table class="table" id="table">
-  <tr>
-    <th>Frequency</th>
-    <th>id</th> 
-    <th>mcc/mnc</th>
-  </tr>
-  <tr id="cell">
-    <td id="1"></td>
-    <td id="2"></td> 
-    <td id="3"></td>
-  </tr>
-</table>
-  </div>
-  <script type="module" src="script.js" ></script>
 </body>
 
 </html>

@@ -12,10 +12,15 @@ const Cell = class Cell {
 class Scanner {
   constructor() {
     this.cells = [];
+    this.frequencies = [];
   }
 
   search(frequency) {
     return new Promise((resolve) => {
+      if (this.frequencies.indexOf(frequency) !== -1) {
+        return resolve();
+      }
+      this.frequencies.push(frequency);
       exec(
         `cd /home/ibra/LTE-Cell-Scanner/build && ./src/CellSearch -s ${frequency}e6 `,
         async (err, stdout, stderr) => {
@@ -26,7 +31,7 @@ class Scanner {
             console.log("nothing found");
           } else if (stdout.match("Detected the following cells:")) {
             let arr = stdout.split("\n");
-            
+
             let indexes = [];
             indexes = await this._getAllIndexes(arr, "At freqeuncy");
             for (let index of indexes) {
@@ -41,7 +46,7 @@ class Scanner {
               if (arr[index].match("TDD")) {
                 cell.type = "TDD";
               }
-cell.frequency= frequency;
+              cell.frequency = frequency;
               this.cells.push(cell);
             }
             return resolve();
@@ -80,9 +85,9 @@ cell.frequency= frequency;
         i;
       for (i = 0; i < arr.length; i++) {
         if (arr[i].match(val)) indexes.push(i);
-        
-        if (i+1 === arr.length) {
-          console.log(indexes)
+
+        if (i + 1 === arr.length) {
+          console.log(indexes);
           return resolve(indexes);
         }
       }
