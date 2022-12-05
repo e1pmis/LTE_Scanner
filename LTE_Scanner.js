@@ -1,114 +1,262 @@
+const fs = require("fs");
+const hexToBinary = require("hex-to-binary");
 const { spawn, exec } = require("child_process");
+const { ReadlineParser } = require("@serialport/parser-readline");
+const { connected } = require("process");
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const Cell = class Cell {
-  constructor() {
-    this.frequency;
-    this.id;
-    this.type;
-    this.rxPowerLevel;
-    this.mcc = "N/A";
-    this.mnc = "N/A";
-  }
+    constructor() {
+        this.id;
+        this.frequency;
+        this.type = "FDD";
+        this.rxPowerLevel;
+        this.mcc = "N/A";
+        this.mnc = "N/A";
+        this.decodedID = "N/A";
+        this.mib = {
+            Antennas: "nan",
+            RBs: "nan",
+            FN: "nan",
+            PHICH_duration: "nan",
+            Ng: "nan",
+        };
+        this.PDSCH = {
+            RNTI: "nan",
+            Modulation: "nan",
+            Redundancy_Version: "nan",
+            TransportBlock: null,
+        };
+    }
 };
 class Scanner {
-  constructor() {
-    this.cells = [];
-    this.frequencies = [];
-  }
+    constructor() {
+        this.cells = [];
+        this.frequencies = {};
+    }
 
-  search(frequency) {
-    return new Promise((resolve) => {
-      if (this.frequencies.indexOf(frequency) !== -1) {
-        return resolve();
-      }
-      this.frequencies.push(frequency);
-      exec(
-        `cd /home/ibra/LTE-Cell-Scanner/build && ./src/CellSearch -s ${frequency}e6 `,
-        async (err, stdout, stderr) => {
-          if (err) {
-            return resolve(stderr);
-          }
-          if (stdout.match("No LTE cells were found...")) {
-            console.log("nothing found");
-          } else if (stdout.match("Detected the following cells:")) {
-            let arr = stdout.split("\n");
+    search(frequency, attemps, time, res) {
+        let cell = new Cell(); 
+        let hex = false;
+        let hexArr = [];
+        let stop1 = false;
+        let ready = false;
+        console.log(`\nScaning ... frequency= ${frequency}`);
+        return new Promise(async (resolve) => {
+            const ls = spawn("ltedecode", [
+                `-c 2`,
+                `-f ${frequency}e6`,
+                `-g 100`,
+            ]);
+            let timer = setTimeout(() => {
+                console.log(`No cells detected on frequeny = ${frequency}`);
+                ls.kill();
+                resolve();
+            }, time * 1000);
 
-            let indexes = [];
-            indexes = await this._getAllIndexes(arr, "At freqeuncy");
-            for (let index of indexes) {
-              let cell = new Cell();
-              let arr0 = arr[index + 1].split(/\s+/);
-              cell.id = arr0[3];
-              let arr1 = arr[index + 3].split(/\s+/g);
-              cell.rxPowerLevel = arr1[4] + "dB";
-              if (arr[index].match("FDD")) {
-                cell.type = "FDD";
-              }
-              if (arr[index].match("TDD")) {
-                cell.type = "TDD";
-              }
-              cell.frequency = frequency;
-              this.cells.push(cell);
+            const parser = ls.stdout.pipe(
+                new ReadlineParser({ delimiter: "\n" })
+            );
+            parser.on("data", (data) => {
+                let line = data.toString();
+
+                if (line.match("Cell ID")) {
+                    let arr = line.split(/\s+/);
+                    arr[5] = arr[5].split(",");
+                    cell.id = arr[5][0];
+                    this.estimate(frequency, cell.id);
+                } else if (line.match("PHICH duration")) {
+                    let arr = line.split(/\s+/);
+                    arr[4] = arr[4].split(",");
+                    cell.mib.Antennas = arr[4][0];
+                    arr[7] = arr[7].split(",");
+                    cell.mib.RBs = arr[7][0];
+                    arr[10] = arr[10].split(",");
+                    cell.mib.FN = arr[10][0];
+                    arr[14] = arr[14].split(",");
+                    cell.mib.PHICH_duration = arr[14][0];
+                    cell.mib.PHICH_duration = arr[17].slice(0, -4);
+                } else if (line.match("RNTI") && line.match("PDSCH")) {
+                    let arr = line.split(/\s+/);
+                    arr[4] = arr[4].split(",");
+                    cell.PDSCH.RNTI = arr[4][0];
+                    arr[6] = arr[6].split(",");
+                    cell.PDSCH.Modulation = arr[6][0];
+                    cell.PDSCH.Redundancy_Version = arr[9].slice(0, -4);
+                } else if (line.match("Decoded transport")) {
+                    hex = true;
+                } else if (line.match(":")) {
+                    hex = false;
+                }
+                if (hex) {
+                    if (!line.match("Decoded transport")) {
+                        hexArr.push(line);
+                    }
+                } else {
+                    if (hexArr.length != 0) {
+                        let block = "";
+                        ls.stdout.unpipe();
+                        // console.log(hexArr);
+                        for (let line of hexArr) {
+                            block = block + line;
+                        }
+                        block = block.replace(/\s/g, "");
+                        block = block.slice(7, -4);
+                        cell.PDSCH.TransportBlock = block;
+                        ls.kill();
+                        hexArr = [];
+                    }
+                }
+            });
+
+            ls.on("close", async (code) => {
+                if (cell.PDSCH.TransportBlock) {
+                    clearTimeout(timer);
+                    console.log(
+                        `Cell detected on f= ${frequency} , Cell ID = ${cell.id}`
+                    );
+                    let decoded = await this.asn1(cell);
+                    if (decoded) {
+                        if (!this.exist(cell)) {
+                            
+                            this.cells.push(cell);
+                        } 
+                        if(res.lenght !=0){
+                            for(let rs of res){
+                                rs.resolve()
+                            }
+                        }else {
+                            resolve()
+                        }
+                    } else {
+                        if (attemps != 0) {
+                            res.push({ resolve: resolve });
+
+                            await this.search(frequency, attemps - 1, time , res);
+                        } else
+                            resolve(
+                                console.log(
+                                    `Failed to decode BCCH on frequency= ${frequency} after many attemps`
+                                )
+                            );
+                    }
+                }
+            });
+        });
+    }
+    exist(cell) {
+        for (let cl in this.cells) {
+            if (cl.decodedID == cell.decodedID) {
+                return true;
             }
-            return resolve();
-          }
         }
-      );
-    });
-  }
+        return false;
+    }
 
-  octo(req, res) {
-    let bcch = [];
+    async asn1(cell) {
+        return new Promise(async (resolve, reject) => {
+            console.log(`Decoding BCCH-DL-SCH-Message ...`);
+            try {
+                fs.writeFileSync("tmp_sib1.hex", cell.PDSCH.TransportBlock);
+            } catch (err) {
+                console.error(err);
+            }
 
-    return new Promise((resolve) => {
-      const ls = spawn("./octo.sh");
+            exec(
+                `xxd -r -p tmp_sib1.hex bin.per`,
+                async (err, stdout, stderr) => {}
+            );
+            exec(
+                `asn1_test/LTE-BCCH-DL-SCH-decode/progname bin.per -p BCCH-DL-SCH-Message`,
+                async (err, stdout, stderr) => {
+                    if (stdout.match("<plmn-Identity>")) {
+                        let bcch = await bcchParser(stdout);
+                        cell.mcc = bcch["mcc"];
+                        cell.mnc = bcch["mnc"];
+                        cell.rxPowerLevel = bcch["rx"];
+                        cell.decodedID = bcch["id"];
+                        console.log(`BCCH-DL-SCH-decode passed ! `);
+                        resolve(true);
+                    } else {
+                        console.log(`BCCH-DL-SCH-decode faild`);
+                        resolve(false);
+                    }
+                }
+            );
+        });
+    }
 
-      ls.stdout.on("data", async (data) => {
-        let str = data.toString();
-        if (str.match("<plmn-Identity>")) {
-          bcch.push(str);
+    estimate(frequency, id) {
+        if (this.frequencies[`${frequency}`]) {
+            if (this.frequencies[`${frequency}`].includes(`${id}`)) {
+                return;
+            } else {
+                this.frequencies[`${frequency}`].push(id);
+            }
+        } else {
+            this.frequencies[`${frequency}`] = [id];
         }
-        if (str.match("</plmn-Identity>")) {
-          bcch.push(str);
-          let mccmnc = await getCell(result);
-          resolve(cell);
-        }
-      });
+    }
 
-      ls.on("close", (code) => {
-        console.log(`child process exited with code ${code}`);
-      });
-    });
-  }
-  _getAllIndexes(arr, val) {
-    return new Promise(async (resolve) => {
-      let indexes = [],
-        i;
-      for (i = 0; i < arr.length; i++) {
-        if (arr[i].match(val)) indexes.push(i);
+    // octo(req, res) {
+    //     let bcch = [];
 
-        if (i + 1 === arr.length) {
-          console.log(indexes);
-          return resolve(indexes);
-        }
-      }
-    });
-  }
+    //     return new Promise((resolve) => {
+    //         const ls = spawn("./octo.sh");
+
+    //         ls.stdout.on("data", async (data) => {
+    //             let str = data.toString();
+    //             if (str.match("<plmn-Identity>")) {
+    //                 bcch.push(str);
+    //             }
+    //             if (str.match("</plmn-Identity>")) {
+    //                 bcch.push(str);
+    //                 let mccmnc = await bcchParser(result);
+    //                 resolve(cell);
+    //             }
+    //         });
+
+    //         ls.on("close", (code) => {
+    //             console.log(`child process exited with code ${code}`);
+    //         });
+    //     });
+    // }
+    // _getAllIndexes(arr, val) {
+    //     return new Promise(async (resolve) => {
+    //         let indexes = [],
+    //             i;
+    //         for (i = 0; i < arr.length; i++) {
+    //             if (arr[i].match(val)) indexes.push(i);
+
+    //             if (i + 1 === arr.length) {
+    //                 console.log(indexes);
+    //                 return resolve(indexes);
+    //             }
+    //         }
+    //     });
+    // }
 }
 
 module.exports = Scanner;
 
-function getCell(result) {
-  let mccmnc = { mcc: "", mnc: "" };
-  return new Promise((resolve) => {
-    let lines = result[result.length - 1].split("\n");
-    let arr = [];
-    for (let line of lines) {
-      if (line.match("<MCC-MNC-Digit>")) {
-        arr.push(line.match(/\d+/));
-      }
-    }
-    mccmnc.mcc = `${arr[0]}${arr[1]}${arr[2]}`;
-    mccmnc.mnc = `${arr[3]}${arr[4]}`;
-    resolve(mccmnc);
-  });
+function bcchParser(result) {
+    let data = { mcc: "", mnc: "", id: "", rx: "" };
+    return new Promise(async (resolve) => {
+        let lines = result.split("\n");
+        let arr = [];
+        for (let line of lines) {
+            if (line.match("<MCC-MNC-Digit>")) {
+                arr.push(line.match(/\d+/));
+            } else if (line.match("<cellIdentity>")) {
+                let id = lines[lines.indexOf(line) + 1].match(/\d+/).toString();
+                data.id = parseInt(id, 2);
+            } else if (line.match("<q-RxLevMin>")) {
+                let arr = line.split(">");
+                arr = arr[1].split("<");
+                data.rx = arr[0];
+            }
+        }
+        data.mcc = `${arr[0]}${arr[1]}${arr[2]}`;
+        data.mnc = `${arr[3]}${arr[4]}`;
+        resolve(data);
+    });
 }
