@@ -35,12 +35,12 @@ class Scanner {
     }
 
     search(frequency, attemps, time, res) {
-        let cell = new Cell(); 
+        let cell = new Cell();
         let hex = false;
         let hexArr = [];
         let stop1 = false;
         let ready = false;
-        console.log(`\nScaning ... frequency= ${frequency}`);
+        console.log(`\nScaning ... frequency = ${frequency}`);
         return new Promise(async (resolve) => {
             const ls = spawn("ltedecode", [
                 `-c 2`,
@@ -48,9 +48,9 @@ class Scanner {
                 `-g 100`,
             ]);
             let timer = setTimeout(() => {
-                console.log(`No cells detected on frequeny = ${frequency}`);
+                // console.log(`No cells detected on frequeny = ${frequency}`);
                 ls.kill();
-                resolve();
+                resolve(`No cells detected on frequeny = ${frequency}`);
             }, time * 1000);
 
             const parser = ls.stdout.pipe(
@@ -110,33 +110,35 @@ class Scanner {
 
             ls.on("close", async (code) => {
                 if (cell.PDSCH.TransportBlock) {
-                    clearTimeout(timer);
+                    // clearTimeout(timer);
                     console.log(
-                        `Cell detected on f= ${frequency} , Cell ID = ${cell.id}`
+                        `Cell detected on frequency = ${frequency} , Cell ID = ${cell.id}`
                     );
-                    let decoded = await this.asn1(cell);
-                    if (decoded) {
-                        if (!this.exist(cell)) {
-                            
+                    // let decoded = await this.asn1(cell);
+                    if (await this.asn1(cell) == 1) {
+                        if (!(await this.exist(cell))) {
                             this.cells.push(cell);
-                        } 
-                        if(res.lenght !=0){
-                            for(let rs of res){
-                                rs.resolve()
+                        }
+                        if (res.lenght != 0) {
+                            for (let rs of res) {
+                                rs.resolve("decoded");
                             }
-                        }else {
-                            resolve()
+                        } else {
+                            resolve("decoded");
                         }
                     } else {
                         if (attemps != 0) {
                             res.push({ resolve: resolve });
 
-                            await this.search(frequency, attemps - 1, time , res);
+                            await this.search(
+                                frequency,
+                                attemps - 1,
+                                time,
+                                res
+                            );
                         } else
                             resolve(
-                                console.log(
-                                    `Failed to decode BCCH on frequency= ${frequency} after many attemps`
-                                )
+                                `Failed to decode BCCH on frequency= ${frequency} after many attemps`
                             );
                     }
                 }
@@ -144,12 +146,14 @@ class Scanner {
         });
     }
     exist(cell) {
-        for (let cl in this.cells) {
-            if (cl.decodedID == cell.decodedID) {
-                return true;
+        return new Promise(async (resolve, reject) => {
+            for (let cl in this.cells) {
+                if (cl.decodedID == cell.decodedID) {
+                    resolve(true)
+                }
             }
-        }
-        return false;
+            resolve(false)
+        });
     }
 
     async asn1(cell) {
@@ -174,11 +178,11 @@ class Scanner {
                         cell.mnc = bcch["mnc"];
                         cell.rxPowerLevel = bcch["rx"];
                         cell.decodedID = bcch["id"];
-                        console.log(`BCCH-DL-SCH-decode passed ! `);
-                        resolve(true);
+                        console.log(`BCCH-DL-SCH-decode passed !`);
+                        resolve(1);
                     } else {
                         console.log(`BCCH-DL-SCH-decode faild`);
-                        resolve(false);
+                        resolve(0);
                     }
                 }
             );
