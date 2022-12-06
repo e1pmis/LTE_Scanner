@@ -38,22 +38,28 @@ class Scanner {
         let cell = new Cell();
         let hex = false;
         let hexArr = [];
-        let stop1 = false;
-        let ready = false;
+        let cancel = false;
+        let ready = true;
+        cell.frequency = frequency;
         console.log(`\nScaning ... frequency = ${frequency}`);
-        return new Promise(async (resolve) => {
-            const ls = spawn("ltedecode", [
+        return new Promise(async (resolve, reject) => {
+            const ltedecode = spawn("ltedecode", [
                 `-c 2`,
                 `-f ${frequency}e6`,
                 `-g 100`,
             ]);
             let timer = setTimeout(() => {
                 // console.log(`No cells detected on frequeny = ${frequency}`);
-                ls.kill();
+                cancel = true;
+                ltedecode.kill();
                 resolve(`No cells detected on frequeny = ${frequency}`);
             }, time * 1000);
 
-            const parser = ls.stdout.pipe(
+            ltedecode.stderr.on("data", (data) => {
+                // console.error(`ltedecode stderr: ${data}`);
+            });
+
+            const parser = ltedecode.stdout.pipe(
                 new ReadlineParser({ delimiter: "\n" })
             );
             parser.on("data", (data) => {
@@ -94,7 +100,7 @@ class Scanner {
                 } else {
                     if (hexArr.length != 0) {
                         let block = "";
-                        ls.stdout.unpipe();
+                        ltedecode.stdout.unpipe();
                         // console.log(hexArr);
                         for (let line of hexArr) {
                             block = block + line;
@@ -102,57 +108,61 @@ class Scanner {
                         block = block.replace(/\s/g, "");
                         block = block.slice(7, -4);
                         cell.PDSCH.TransportBlock = block;
-                        ls.kill();
+                        ltedecode.kill();
                         hexArr = [];
                     }
                 }
             });
 
-            ls.on("close", async (code) => {
-                if (cell.PDSCH.TransportBlock) {
-                    // clearTimeout(timer);
-                    console.log(
-                        `Cell detected on frequency = ${frequency} , Cell ID = ${cell.id}`
-                    );
-                    // let decoded = await this.asn1(cell);
-                    if (await this.asn1(cell) == 1) {
-                        if (!(await this.exist(cell))) {
-                            this.cells.push(cell);
-                        }
-                        if (res.lenght != 0) {
-                            for (let rs of res) {
-                                rs.resolve("decoded");
-                            }
-                        } else {
-                            resolve("decoded");
-                        }
-                    } else {
-                        if (attemps != 0) {
-                            res.push({ resolve: resolve });
-
-                            await this.search(
-                                frequency,
-                                attemps - 1,
-                                time,
-                                res
-                            );
-                        } else
-                            resolve(
-                                `Failed to decode BCCH on frequency= ${frequency} after many attemps`
-                            );
-                    }
+            ltedecode.on("close", async (code) => {
+                if (!cancel) {
+                    clearTimeout(timer);
+                    res.push({ resolve: resolve });
+                    this.isValid(cell, frequency, attemps, time, res);
                 }
             });
         });
     }
-    exist(cell) {
-        return new Promise(async (resolve, reject) => {
-            for (let cl in this.cells) {
-                if (cl.decodedID == cell.decodedID) {
-                    resolve(true)
+    async isValid(cell, frequency, attemps, time, res) {
+        console.log(
+            `Cell detected on frequency = ${frequency} , Cell ID = ${cell.id}`
+        );
+        // let decoded = await this.asn1(cell);
+        if ((await this.asn1(cell)) == 1) {
+            if (!(await this.exist(cell))) {
+                this.cells.push(cell);
+            }
+            if (res.lenght != 0) {
+                for (let rs of res) {
+                    rs.resolve("decoded");
                 }
             }
-            resolve(false)
+        } else {
+            if (attemps != 0) {
+                await this.search(frequency, attemps - 1, time, res);
+            } else {
+                for (let rs of res) {
+                    rs.resolve(
+                        `Failed to decode BCCH on frequency= ${frequency} after ${res.length} attemps`
+                    );
+                }
+            }
+        }
+    }
+
+    exist(cell) {
+        return new Promise(async (resolve, reject) => {
+            if (this.cells.length == 0) {
+                resolve(false);
+            } else {
+                for (let i = 0; i < this.cells.length; i++) {
+                    if (this.cells[i].decodedID == cell.decodedID) {
+                        resolve(true);
+                    } else if (i == (this.cells.length -1)) {
+                        resolve(false);
+                    }
+                }
+            }
         });
     }
 
@@ -162,7 +172,7 @@ class Scanner {
             try {
                 fs.writeFileSync("tmp_sib1.hex", cell.PDSCH.TransportBlock);
             } catch (err) {
-                console.error(err);
+                console.log(err);
             }
 
             exec(
@@ -172,6 +182,12 @@ class Scanner {
             exec(
                 `asn1_test/LTE-BCCH-DL-SCH-decode/progname bin.per -p BCCH-DL-SCH-Message`,
                 async (err, stdout, stderr) => {
+                    // if (stderr) {
+                    //     console.log(stderr);
+                    // }
+                    // if (err) {
+                    //     console.log(err);
+                    // }
                     if (stdout.match("<plmn-Identity>")) {
                         let bcch = await bcchParser(stdout);
                         cell.mcc = bcch["mcc"];
@@ -200,44 +216,6 @@ class Scanner {
             this.frequencies[`${frequency}`] = [id];
         }
     }
-
-    // octo(req, res) {
-    //     let bcch = [];
-
-    //     return new Promise((resolve) => {
-    //         const ls = spawn("./octo.sh");
-
-    //         ls.stdout.on("data", async (data) => {
-    //             let str = data.toString();
-    //             if (str.match("<plmn-Identity>")) {
-    //                 bcch.push(str);
-    //             }
-    //             if (str.match("</plmn-Identity>")) {
-    //                 bcch.push(str);
-    //                 let mccmnc = await bcchParser(result);
-    //                 resolve(cell);
-    //             }
-    //         });
-
-    //         ls.on("close", (code) => {
-    //             console.log(`child process exited with code ${code}`);
-    //         });
-    //     });
-    // }
-    // _getAllIndexes(arr, val) {
-    //     return new Promise(async (resolve) => {
-    //         let indexes = [],
-    //             i;
-    //         for (i = 0; i < arr.length; i++) {
-    //             if (arr[i].match(val)) indexes.push(i);
-
-    //             if (i + 1 === arr.length) {
-    //                 console.log(indexes);
-    //                 return resolve(indexes);
-    //             }
-    //         }
-    //     });
-    // }
 }
 
 module.exports = Scanner;
