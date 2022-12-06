@@ -30,20 +30,33 @@
       </div>
     </nav>
     <form id="theForm" class="form" class="fieldset" action="/submit" method="POST">
+      
+      <p>USRP parameters:</p>
+
+      <label for="rxgain">receiver gain</label>
+      <input name="rxgain" id="rxg" type="text" value="80"><br>
+      <label for="noa">Number of antennas</label>
+      <input name="noa" id="noa" type="text" value="2"><br>
+
+      <p>Scanner parameters:</p>
       <label for="sf">Start frequency:</label>
       <input name="sFreq" id="sf" type="text" value="796"><br>
+      <label for="step">Step</label>
+      <input name="step" id="st" type="text" value="1"><br>
       <label for="ef">End frequency:</label>
       <input name="eFreq" id="ef" type="text" value="816"><br>
       <input type="submit" value="Submit"></input>
+
     </form>
     <div class="jumbotron" style="padding:40px;">
       <p><a id="reset" class="btn  btn-lg" role="button">reset</a></p>
       <p></p><a id="gcells" class="btn  btn-lg" role="button">results</a></p>
       <table class="table" id="table">
         <tr>
-          <th>Frequency</th>
-          <th>id</th> 
-          <th>mcc/mnc</th>
+          <th>Cell id</th>
+          <th>MIB</th> 
+          <th>PDCSH</th>
+          <th>BCCH Message</th>
         </tr>
         <tr id="cell">
           <td id="1"></td>
@@ -52,7 +65,7 @@
         </tr>
       </table>
         </div>
-        <script type="module" src="script.js" ></script>
+        <script type="module" src="/Users/abdul/Desktop/LTE_Scanner/script.js" ></script>
     </div>
 </body>
 
