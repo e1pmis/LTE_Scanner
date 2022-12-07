@@ -2,16 +2,17 @@ let Scanner = require("./LTE_Scanner");
 let scanner = new Scanner();
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-
+let obj= {
+    noa: '2',
+    rxgain: '80',
+    sFreq: '796',
+    step: '10',
+    eFreq: '816',
+    time: '40',
+    attemps: '3'
+  }
 async function test() {
-    for (let i = 0 ; i<10 ; i++){
-
-        await scanner.search(796, 2, 50, []).then((data)=> console.log(data)).catch((err)=> console.log(err));
-        await scanner.search(806, 2, 50, []).then((data)=> console.log(data)).catch((err)=> console.log(err));
-        await scanner.search(816, 2, 50, []).then((data)=> console.log(data)).catch((err)=> console.log(err));
-        console.log(scanner.cells);
-        console.log(scanner.frequencies);
-    }
+    await scanner.scan(obj)
 }
 
 test();

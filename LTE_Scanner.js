@@ -33,8 +33,41 @@ class Scanner {
         this.cells = [];
         this.frequencies = {};
     }
+    async scan(scanObj) {
+        return new Promise(async (resolve, reject) => {
+            if (scanObj["eFreq"] == -1) {
+                await this.search(
+                    scanObj["noa"],
+                    scanObj["rxgain"],
+                    scanObj["sFreq"],
+                    scanObj["attemps"],
+                    scanObj["time"],
+                    []
+                ).then((data) => console.log(data));
+                resolve();
+            } else {
+                let total =
+                    Math.abs(Number(scanObj["sFreq"]) - Number(scanObj["eFreq"])) /
+                    Number(scanObj["step"]);
+                    console.log(total)
+                for (let i = 0; i <= total; i++) {
+                    let x = i * Number(scanObj["step"])
+                    let f = Number(scanObj["sFreq"]) +x
+                    await this.search(
+                        scanObj["noa"],
+                        scanObj["rxgain"],
+                        f,
+                        scanObj["attemps"],
+                        scanObj["time"],
+                        []
+                    ).then((data) => console.log(data));
+                }
+                resolve();
+            }
+        });
+    }
 
-    search(frequency, attemps, time, res) {
+    search(noa, rxgain, frequency, attemps, time, res) {
         let cell = new Cell();
         let hex = false;
         let hexArr = [];
@@ -44,9 +77,9 @@ class Scanner {
         console.log(`\nScaning ... frequency = ${frequency}`);
         return new Promise(async (resolve, reject) => {
             const ltedecode = spawn("ltedecode", [
-                `-c 2`,
+                `-c ${noa}`,
                 `-f ${frequency}e6`,
-                `-g 100`,
+                `-g ${rxgain}`,
             ]);
             let timer = setTimeout(() => {
                 // console.log(`No cells detected on frequeny = ${frequency}`);
@@ -118,12 +151,12 @@ class Scanner {
                 if (!cancel) {
                     clearTimeout(timer);
                     res.push({ resolve: resolve });
-                    this.isValid(cell, frequency, attemps, time, res);
+                    this.isValid(cell,noa , rxgain, frequency, attemps, time, res);
                 }
             });
         });
     }
-    async isValid(cell, frequency, attemps, time, res) {
+    async isValid(cell, noa , rxgain,frequency, attemps, time, res) {
         console.log(
             `Cell detected on frequency = ${frequency} , Cell ID = ${cell.id}`
         );
@@ -139,7 +172,7 @@ class Scanner {
             }
         } else {
             if (attemps != 0) {
-                await this.search(frequency, attemps - 1, time, res);
+                await this.search(noa , rxgain , frequency, attemps - 1, time, res);
             } else {
                 for (let rs of res) {
                     rs.resolve(
@@ -158,7 +191,7 @@ class Scanner {
                 for (let i = 0; i < this.cells.length; i++) {
                     if (this.cells[i].decodedID == cell.decodedID) {
                         resolve(true);
-                    } else if (i == (this.cells.length -1)) {
+                    } else if (i == this.cells.length - 1) {
                         resolve(false);
                     }
                 }

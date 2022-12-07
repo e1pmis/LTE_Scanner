@@ -10,7 +10,7 @@
 </head>
 
 
-     
+
 <body>
   <div style="margin:100px;">
     <nav class="navbar navbar-inverse navbar-static-top">
@@ -29,44 +29,105 @@
         </ul>
       </div>
     </nav>
-    <form id="theForm" class="form" class="fieldset" action="/submit" method="POST">
-      
-      <p>USRP parameters:</p>
+    <form id="theForm" class="form" class="fieldset" action="/scan" method="POST">
+      <p>
+      <table class="table" id="tt">
+        <tr>
+          <th>
+            <p>USRP parameters:</p>
+          </th>
+          <th>
+            <p></p>
+          </th>
+          <th>
+            <p>Scanner parameters:</p>
+          </th>
 
-      <label for="rxgain">receiver gain</label>
-      <input name="rxgain" id="rxg" type="text" value="80"><br>
-      <label for="noa">Number of antennas</label>
-      <input name="noa" id="noa" type="text" value="2"><br>
+          <th>
+            <p></p>
+          </th>
+          <th>
+            <p>Advanced parameters:</p>
+          </th>
+          <th>
+            <p></p>
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <p><label for="noa">Number of antennas</label><br>
+              <label for="rxgain">Receiver gain</label><br>
+            </p>
+          </th>
+          <th>
+            <p>
+              <input name="noa" id="noa" type="text" value="2"></input><br>
+              <input name="rxgain" id="rxg" type="text" value="80"></input><br>
+            </p>
+          </th>
 
-      <p>Scanner parameters:</p>
-      <label for="sf">Start frequency:</label>
-      <input name="sFreq" id="sf" type="text" value="796"><br>
-      <label for="step">Step</label>
-      <input name="step" id="st" type="text" value="1"><br>
-      <label for="ef">End frequency:</label>
-      <input name="eFreq" id="ef" type="text" value="816"><br>
-      <input type="submit" value="Submit"></input>
+          <th>
+            <p><label for="sf">Start frequency:</label><br>
+              <label for="step">Step</label><br>
+              <label for="ef">End frequency:</label><br>
+            </p>
+          </th>
+          <th>
+            <p>
+              <input name="sFreq" id="sf" type="text" value="796"><br>
 
+              <input name="step" id="st" type="text" value="1"><br>
+
+              <input name="eFreq" id="ef" type="text" value="-1"><br>
+            </p>
+          </th>
+          <th>
+            <p>
+              <label for="time">Time</label><br>
+              <label for="attemps">Attemps</label><br>
+            </p>
+          </th>
+          <th>
+            <p>
+              <input name="time" id="time" type="text" value="30"><br>
+
+              <input name="attemps" id="attemps" type="text" value="3"><br>
+            </p>
+          </th>
+        </tr>
+        <tr>
+          <th>
+            <p><input type="submit" value="Scan"></p>
+          </th>
+          <th>
+            <p><a id="reset" class="btn-group-lg" role="button">reset</a></p>
+          </th>
+          <th>
+            <p><a id="results" class="btn-group-lg" role="button">results</a></p>
+          </th>
+        </tr>
+        </p>
+      </table>
+      </p>
     </form>
-    <div class="jumbotron" style="padding:40px;">
-      <p><a id="reset" class="btn  btn-lg" role="button">reset</a></p>
-      <p></p><a id="gcells" class="btn  btn-lg" role="button">results</a></p>
+   
+    <div class="jumbotron" style="padding:10px;">
       <table class="table" id="table">
         <tr>
           <th>Cell id</th>
-          <th>MIB</th> 
-          <th>PDCSH</th>
+          <th>MIB</th>
+          <th>PDSCH</th>
           <th>BCCH Message</th>
         </tr>
         <tr id="cell">
           <td id="1"></td>
-          <td id="2"></td> 
+          <td id="2"></td>
           <td id="3"></td>
         </tr>
       </table>
-        </div>
-        <script type="module" src="/Users/abdul/Desktop/LTE_Scanner/script.js" ></script>
     </div>
+    <script type="module" src="/Users/abdul/Desktop/LTE_Scanner/script.js"></script>
+  </div>
 </body>
 
 </html>

@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // app.use(bodyParser.raw());
 let BUSY = false;
+let PORT = 2250
 const Cell = class Cell {
     constructor() {
         this.id;
@@ -50,15 +51,9 @@ router.get("/script.js", async function (req, res) {
     res.sendFile("script.js");
 });
 
-router.post("/submit", async function requestHandler(req, res) {
+router.post("/scan", async function requestHandler(req, res) {
     if (!BUSY) {
         BUSY = true;
-        for (let i = 0; i < 3; i++) {
-            let cell = new Cell();
-            scanner.cells.push(cell)
-        }
-        console.log(scanner.cells)
-        console.log("submit");
         console.log(req.body);
     } else {
         console.log("the server is busy");
@@ -70,6 +65,6 @@ router.post("/submit", async function requestHandler(req, res) {
 // });
 
 app.use("/", router);
-app.listen(process.env.port || 8080);
+app.listen(process.env.port || PORT);
 
-console.log("Running at Port 8080");
+console.log(`LTE_Scanner id runing on port: ${PORT}`);
