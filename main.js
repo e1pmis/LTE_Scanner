@@ -1,4 +1,7 @@
 const express = require("express");
+const logger = require("node-color-log");
+let date = new Date();
+
 const Scanner = require("./LTE_Scanner");
 let scanner = new Scanner();
 const app = express();
@@ -8,39 +11,22 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // app.use(bodyParser.raw());
+
 let BUSY = false;
-let PORT = 2250
-const Cell = class Cell {
-    constructor() {
-        this.id;
-        this.frequency;
-        this.type = "FDD";
-        this.rxPowerLevel;
-        this.mcc = "N/A";
-        this.mnc = "N/A";
-        this.decodedID = "N/A";
-        this.mib = {
-            Antennas: "nan",
-            RBs: "nan",
-            FN: "nan",
-            PHICH_duration: "nan",
-            Ng: "nan",
-        };
-        this.PDSCH = {
-            RNTI: "nan",
-            Modulation: "nan",
-            Redundancy_Version: "nan",
-            TransportBlock: null,
-        };
-    }
-};
+let PORT = 2250;
 
 router.get("/", async function (req, res) {
     res.sendFile(path.join(__dirname + "/index.html"));
 });
+router.get("/imsi", async function (req, res) {
+    res.sendFile(path.join(__dirname + "/IMSI_zug.Bloecke.pdf"));
+});
 
 router.get("/getCells", async function (req, res) {
     res.send(scanner.cells);
+});
+router.get("/info", async function (req, res) {
+    res.send(scanner.frequencies);
 });
 router.get("/reset", async function (req, res) {
     scanner.cells = [];
@@ -48,15 +34,41 @@ router.get("/reset", async function (req, res) {
 });
 
 router.get("/script.js", async function (req, res) {
-    res.sendFile("script.js");
+    res.sendFile(path.join(__dirname + "/script.js"));
 });
 
 router.post("/scan", async function requestHandler(req, res) {
+    let date = new Date();
+
     if (!BUSY) {
         BUSY = true;
-        console.log(req.body);
+        let result = await scanner.scan(req.body);
+        if (result == "done") {
+            BUSY = false;
+            // res.sendFile(path.join(__dirname + "/index.html"));
+            res.send(
+                '<script>alert("Scaning has been sucessfully completed"); window.location.href = "./"; </script>'
+            );
+            res.end();
+        } else {
+            BUSY = false;
+            // res.sendFile(path.join(__dirname + "/index.html"));
+            res.send(
+                '<script>alert("Something went wrong!!"); window.location.href = "./"; </script>'
+            );
+            res.end();
+        }
     } else {
-        console.log("the server is busy");
+        logger
+            .color("red")
+            .log(
+                `\n${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} The scanner is busy!`
+            );
+        // res.sendFile(path.join(__dirname + "/index.html"));
+        res.send(
+            '<script>alert("Scanner is busy!"); window.location.href = "./"; </script>'
+        );
+        res.end();
     }
     // await scanner.search(req.body.sFreq);
 });
@@ -67,4 +79,8 @@ router.post("/scan", async function requestHandler(req, res) {
 app.use("/", router);
 app.listen(process.env.port || PORT);
 
-console.log(`LTE_Scanner id runing on port: ${PORT}`);
+logger
+    .color("green")
+    .log(
+        `\n${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} LTE_Scanner is runing on port: ${PORT}`
+    );

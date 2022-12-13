@@ -8,8 +8,9 @@ let check = () => {
             })
             .then(function (myJson) {
                 if (myJson.length !== cells.length) {
-                    const button = document.getElementById("gcells");
-                    button.style.color = "red";
+                    const button = document.getElementById("results");
+                    button.innerText = "Show results!";
+                    button.style.color = "green";
                     cells = myJson;
                 }
                 check();
@@ -21,21 +22,21 @@ let check = () => {
 };
 check();
 
-let reset = (document.getElementById("reset").onclick = () => {
-    cells = [];
-    fetch("./reset")
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (myJson) {})
-        .catch(function (error) {
-            console.log("Error: " + error);
-        });
-});
+// let reset = (document.getElementById("reset").onclick = () => {
+//     cells = [];
+//     fetch("./reset")
+//         .then(function (response) {
+//             return response.json();
+//         })
+//         .then(function (myJson) {})
+//         .catch(function (error) {
+//             console.log("Error: " + error);
+//         });
+// });
 
-let getCells = (document.getElementById("gcells").onclick = () => {
-    const button = document.getElementById("gcells");
-    button.style.color = "black";
+let getCells = (document.getElementById("results").onclick = () => {
+    const button = document.getElementById("results");
+    button.innerText = "";
     fetch("./getCells")
         .then(function (response) {
             return response.json();
@@ -47,26 +48,32 @@ let getCells = (document.getElementById("gcells").onclick = () => {
                 let tableRows = table.getElementsByTagName("tr");
                 let rowCount = tableRows.length;
 
-                for (let x = rowCount - 1; x > 0; x--) {
+                for (let x = rowCount ; x > 0; x--) {
                     table.removeChild(tableRows[x]);
                 }
             } catch {}
-            let x = myJson.length % 3;
-            let y = myJson.length + (3 - x);
-            let rawsnumber = y / 3;
-            if (myJson.length <= 3) {
-                rawsnumber = 1;
-            }
-            console.log(x + y + rawsnumber);
-            for (let i = 0; i < rawsnumber; i++) {
+            let row = table.insertRow();
+            let tc = row.insertCell();
+            tc.innerText = "Cell";
+            tc = row.insertCell();
+            tc.innerText = "MIB";
+            tc = row.insertCell();
+            tc.innerText = "PDSCH";
+            tc = row.insertCell();
+            tc.innerText = "BCCH Message";
+
+            for (let i = 0; i <= myJson.length+1; i++) {
                 let row = table.insertRow();
-                for (let i = 0; i < 3; i++) {
-                    if (myJson.length > 0) {
-                        let cell = myJson.pop();
-                        let TableCell = row.insertCell();
-                        TableCell.innerHTML = `<ul class='ul li ol'> <li>Cell id: ${cell.id} </li> <li>Operting frequency: ${cell.frequency}</li><li>Cell type: ${cell.type}</li><li>Rx power level: ${cell.rxPowerLevel}</li><li>MCC: ${cell.mcc}</li><li>MNC: ${cell.mnc}</li></ul> <p><a role='button'>BCCH</a></p>`;
-                    }
-                }
+                let cell = myJson.pop();
+                let tableCell = row.insertCell();
+                // TableCell.innerHTML = `<ul class='ul li ol'> <li>Initial cell id: ${cell.id} </li> <li>Operting frequency: ${cell.frequency}</li><li>Cell type: ${cell.type}</li><li>Rx power level: ${cell.rxPowerLevel}</li><li>MCC: ${cell.mcc}</li><li>MNC: ${cell.mnc}</li></ul>`;
+                tableCell.innerHTML = `<a>Initial cell id: ${cell.id}</a><ul><li>Operting frequency: ${cell.frequency} Mhz</li><li>Cell type: ${cell.type}</li></ul>`;
+                tableCell = row.insertCell();
+                tableCell.innerHTML = `<ul> <li>Antennas: ${cell.mib.Antennas} </li> <li>RB's: ${cell.mib.RBs}</li><li>FN: ${cell.mib.FN}</li> <li>PHICH_duration: ${cell.mib.PHICH_duration}</li></ul>`;
+                tableCell = row.insertCell();
+                tableCell.innerHTML = `<ul> <li>RNTI: ${cell.PDSCH.RNTI} </li> <li>Modulation: ${cell.PDSCH.Modulation}</li><li>Redundancy_Version: ${cell.PDSCH.Redundancy_Version}</li> <li>TransportBlock: ${cell.PDSCH.TransportBlock}</li></ul>`;
+                tableCell = row.insertCell();
+                tableCell.innerHTML = `<ul> <li>decodedID: ${cell.decodedID} </li> <li>MCC: ${cell.mcc}</li><li>MNC: ${cell.mnc}</li> <li>RxPowerLevel: ${cell.rxPowerLevel} dB</li></ul>`;
             }
         })
         .catch(function (error) {

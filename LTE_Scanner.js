@@ -4,6 +4,7 @@ const { spawn, exec } = require("child_process");
 const { ReadlineParser } = require("@serialport/parser-readline");
 const { connected } = require("process");
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const logger = require("node-color-log");
 const Cell = class Cell {
     constructor() {
         this.id;
@@ -43,16 +44,16 @@ class Scanner {
                     scanObj["attemps"],
                     scanObj["time"],
                     []
-                ).then((data) => console.log(data));
-                resolve();
+                );
+                resolve("done");
             } else {
                 let total =
-                    Math.abs(Number(scanObj["sFreq"]) - Number(scanObj["eFreq"])) /
-                    Number(scanObj["step"]);
-                    console.log(total)
+                    Math.abs(
+                        Number(scanObj["sFreq"]) - Number(scanObj["eFreq"])
+                    ) / Number(scanObj["step"]);
                 for (let i = 0; i <= total; i++) {
-                    let x = i * Number(scanObj["step"])
-                    let f = Number(scanObj["sFreq"]) +x
+                    let x = i * Number(scanObj["step"]);
+                    let f = Number(scanObj["sFreq"]) + x;
                     await this.search(
                         scanObj["noa"],
                         scanObj["rxgain"],
@@ -60,9 +61,9 @@ class Scanner {
                         scanObj["attemps"],
                         scanObj["time"],
                         []
-                    ).then((data) => console.log(data));
+                    );
                 }
-                resolve();
+                resolve("done");
             }
         });
     }
@@ -74,18 +75,38 @@ class Scanner {
         let cancel = false;
         let ready = true;
         cell.frequency = frequency;
-        console.log(`\nScaning ... frequency = ${frequency}`);
+        let date = new Date();
+        logger
+            .color("cyan")
+            .log(
+                `\n${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} Scaning ... frequency = ${frequency} Mhz`
+            );
+
         return new Promise(async (resolve, reject) => {
             const ltedecode = spawn("ltedecode", [
+                // `-r internal`,
                 `-c ${noa}`,
                 `-f ${frequency}e6`,
                 `-g ${rxgain}`,
             ]);
             let timer = setTimeout(() => {
                 // console.log(`No cells detected on frequeny = ${frequency}`);
+                let date = new Date(); 
+                logger
+                    .color("yellow")
+                    .log(
+                        `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} No cells detected on frequeny = ${frequency} Mhz`
+                    );
+
                 cancel = true;
                 ltedecode.kill();
-                resolve(`No cells detected on frequeny = ${frequency}`);
+                if (res.length != 0) {
+                    for (let rs of res) {
+                        rs.resolve();
+                    }
+                } else {
+                    resolve();
+                }
             }, time * 1000);
 
             ltedecode.stderr.on("data", (data) => {
@@ -151,15 +172,32 @@ class Scanner {
                 if (!cancel) {
                     clearTimeout(timer);
                     res.push({ resolve: resolve });
-                    this.isValid(cell,noa , rxgain, frequency, attemps, time, res);
+                    this.isValid(
+                        cell,
+                        noa,
+                        rxgain,
+                        frequency,
+                        attemps,
+                        time,
+                        res
+                    );
                 }
             });
         });
     }
-    async isValid(cell, noa , rxgain,frequency, attemps, time, res) {
-        console.log(
-            `Cell detected on frequency = ${frequency} , Cell ID = ${cell.id}`
-        );
+    async isValid(cell, noa, rxgain, frequency, attemps, time, res) {
+        // console.log(
+        //     `Cell detected on frequency = ${frequency} , Cell ID = ${cell.id}`
+        // );
+        let date = new Date();
+        logger
+            .color("green")
+            .log(
+                `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} Cell detected on frequency = ${frequency} , Cell ID = ${
+                    cell.id
+                }`
+            );
+
         // let decoded = await this.asn1(cell);
         if ((await this.asn1(cell)) == 1) {
             if (!(await this.exist(cell))) {
@@ -172,12 +210,26 @@ class Scanner {
             }
         } else {
             if (attemps != 0) {
-                await this.search(noa , rxgain , frequency, attemps - 1, time, res);
+                await this.search(
+                    noa,
+                    rxgain,
+                    frequency,
+                    attemps - 1,
+                    time,
+                    res
+                );
             } else {
-                for (let rs of res) {
-                    rs.resolve(
-                        `Failed to decode BCCH on frequency= ${frequency} after ${res.length} attemps`
+                let date = new Date();
+
+                logger
+                    .color("red")
+                    .log(
+                        `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} Failed to decode BCCH on frequency= ${frequency} Mhz after ${
+                            res.length
+                        } attemps`
                     );
+                for (let rs of res) {
+                    rs.resolve();
                 }
             }
         }
@@ -201,7 +253,14 @@ class Scanner {
 
     async asn1(cell) {
         return new Promise(async (resolve, reject) => {
-            console.log(`Decoding BCCH-DL-SCH-Message ...`);
+            let date = new Date();
+
+            logger
+                .color("green")
+                .log(
+                    `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} Decoding BCCH-DL-SCH-Message ...`
+                );
+
             try {
                 fs.writeFileSync("tmp_sib1.hex", cell.PDSCH.TransportBlock);
             } catch (err) {
@@ -221,16 +280,27 @@ class Scanner {
                     // if (err) {
                     //     console.log(err);
                     // }
+
+                    let date = new Date();
                     if (stdout.match("<plmn-Identity>")) {
                         let bcch = await bcchParser(stdout);
                         cell.mcc = bcch["mcc"];
                         cell.mnc = bcch["mnc"];
                         cell.rxPowerLevel = bcch["rx"];
                         cell.decodedID = bcch["id"];
-                        console.log(`BCCH-DL-SCH-decode passed !`);
+                        logger
+                            .color("green")
+                            .log(
+                                `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} BCCH-DL-SCH-decode passed! `
+                            );
                         resolve(1);
                     } else {
-                        console.log(`BCCH-DL-SCH-decode faild`);
+                        logger
+                            .color("red")
+                            .log(
+                                `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} BCCH-DL-SCH-decode faild! `
+                            );
+
                         resolve(0);
                     }
                 }
