@@ -1,4 +1,6 @@
 const Body = document.body;
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 let cells = [];
 let check = () => {
     setTimeout(() => {
@@ -34,7 +36,7 @@ check();
 //         });
 // });
 
-let getCells = (document.getElementById("results").onclick = () => {
+let getCells = (document.getElementById("results").onclick = async () => {
     const button = document.getElementById("results");
     button.innerText = "";
     fetch("./getCells")
@@ -42,27 +44,30 @@ let getCells = (document.getElementById("results").onclick = () => {
             return response.json();
         })
         .then(function (myJson) {
-            console.log(myJson.length);
-            try {
-                const table = document.getElementById("table");
-                let tableRows = table.getElementsByTagName("tr");
-                let rowCount = tableRows.length;
+            // console.log(myJson.length);
 
-                for (let x = rowCount ; x > 0; x--) {
-                    table.removeChild(tableRows[x]);
-                }
-            } catch {}
-            let row = table.insertRow();
-            let tc = row.insertCell();
-            tc.innerText = "Cell";
-            tc = row.insertCell();
-            tc.innerText = "MIB";
-            tc = row.insertCell();
-            tc.innerText = "PDSCH";
-            tc = row.insertCell();
-            tc.innerText = "BCCH Message";
+            const table = document.getElementById("table");
 
-            for (let i = 0; i <= myJson.length+1; i++) {
+            let tableRows = table.getElementsByTagName("tr");
+            let rowCount = tableRows.length;
+
+            console.log(rowCount);
+
+            for (let x = rowCount -1 ; x > 0; x--) {
+                table.deleteRow(x)
+            }
+
+            // let row = table.insertRow();
+            // let tc = row.insertCell();
+            // tc.innerText = "Cell";
+            // tc = row.insertCell();
+            // tc.innerText = "MIB";
+            // tc = row.insertCell();
+            // tc.innerText = "PDSCH";
+            // tc = row.insertCell();
+            // tc.innerText = "BCCH Message";
+
+            for (let i = 0; i < myJson.length; i++) {
                 let row = table.insertRow();
                 let cell = myJson.pop();
                 let tableCell = row.insertCell();
