@@ -1,16 +1,6 @@
 let Scanner = require("./LTE_Scanner");
 let scanner = new Scanner();
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-let plt = require("nodeplotlib");
-const data = [
-    {
-        x: [1, 3, 4, 5],
-        y: [3, 12, 1, 4],
-        type: "scatter",
-    },
-];
-
-plt.plot(data);
 
 let obj = {
     noa: "2",
@@ -23,7 +13,7 @@ let obj = {
 };
 
 async function test() {
-    await scanner.scan(obj);
+    await plt.start();
 }
 
-// test();
+test();

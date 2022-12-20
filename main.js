@@ -11,12 +11,27 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // app.use(bodyParser.raw());
+let Plot = require("./Plot");
+let plt = new Plot();
 
 let BUSY = false;
 let PORT = 2250;
+let PLOTPORT = null;
+
+async function startPlotter() {
+   PLOTPORT = await plt.start();
+}
+startPlotter();
 
 router.get("/", async function (req, res) {
     res.sendFile(path.join(__dirname + "/index.html"));
+});
+router.get("/bands", async function (req, res) {
+    res.sendFile(path.join(__dirname + "/Global Mobile Frequencies Database by Spectrummonitoring.com.html"));
+});
+router.get("/plot", async function (req, res) {
+    res.redirect(`http://localhost:${PLOTPORT}`);
+    // res.sendFile(path.join(__dirname + "/index.html"));
 });
 router.get("/imsi", async function (req, res) {
     res.sendFile(path.join(__dirname + "/IMSI_zug.Bloecke.pdf"));
