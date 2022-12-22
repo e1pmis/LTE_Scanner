@@ -1,6 +1,7 @@
 const express = require("express");
 const logger = require("node-color-log");
 let date = new Date();
+var cp = require("child_process")
 
 const Scanner = require("./LTE_Scanner");
 let scanner = new Scanner();
@@ -19,19 +20,41 @@ let PORT = 2250;
 let PLOTPORT = null;
 
 async function startPlotter() {
-   PLOTPORT = await plt.start();
+    PLOTPORT = await plt.start();
 }
 startPlotter();
 
 router.get("/", async function (req, res) {
     res.sendFile(path.join(__dirname + "/index.html"));
 });
+router.get("/log", async function (req, res) {
+    res.sendFile(path.join(__dirname + "/client.html"));
+});
+
 router.get("/bands", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/Global Mobile Frequencies Database by Spectrummonitoring.com.html"));
+    res.sendFile(
+        path.join(
+            __dirname +
+                "/Global Mobile Frequencies Database by Spectrummonitoring.com.html"
+        )
+    );
 });
 router.get("/plot", async function (req, res) {
-    res.redirect(`http://localhost:${PLOTPORT}`);
+    // res.redirect(`http://localhost:${PLOTPORT}`);
+    // res.redirect(`http://localhost:${PLOTPORT}`);
+    // res.redirect(`http://localhost:${PLOTPORT}`);
     // res.sendFile(path.join(__dirname + "/index.html"));
+    res.send(
+        `<script>
+        alert("Node plot is active on new tap"); window.location.href = "./"; 
+        function NewTab() {
+            window.open(
+                "http://localhost:${plt.port}", "_blank");
+            }
+            NewTab();
+            </script>`
+            );
+            
 });
 router.get("/imsi", async function (req, res) {
     res.sendFile(path.join(__dirname + "/IMSI_zug.Bloecke.pdf"));
@@ -50,6 +73,39 @@ router.get("/reset", async function (req, res) {
 
 router.get("/script.js", async function (req, res) {
     res.sendFile(path.join(__dirname + "/script.js"));
+});
+router.get('/msg', function(req, res){
+    res.writeHead(200, { "Content-Type": "text/event-stream",
+                         "Cache-control": "no-cache" });
+
+    var spw = cp.spawn('ping', ['-c', '100', '127.0.0.1']),
+    str = "";
+
+    process.stdout.on('data', function (data) {
+        str += data.toString();
+
+        // just so we can see the server is doing something
+        // console.log("data");
+
+        // Flush out line by line.
+        var lines = str.split("\n");
+        for(var i in lines) {
+            if(i == lines.length - 1) {
+                str = lines[i];
+            } else{
+                // Note: The double-newline is *required*
+                res.write('data: ' + lines[i] + "\n\n");
+            }
+        }
+    });
+
+    spw.on('close', function (code) {
+        res.end(str);
+    });
+
+    spw.stderr.on('data', function (data) {
+        res.end('stderr: ' + data);
+    });
 });
 
 router.post("/scan", async function requestHandler(req, res) {

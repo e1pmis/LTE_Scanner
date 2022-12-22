@@ -14,6 +14,7 @@ let check = () => {
                     button.innerText = "Show results!";
                     button.style.color = "green";
                     cells = myJson;
+                    getCells();
                 }
                 check();
             })
@@ -53,8 +54,8 @@ let getCells = (document.getElementById("results").onclick = async () => {
 
             console.log(rowCount);
 
-            for (let x = rowCount -1 ; x > 0; x--) {
-                table.deleteRow(x)
+            for (let x = rowCount - 1; x > 0; x--) {
+                table.deleteRow(x);
             }
 
             // let row = table.insertRow();
@@ -67,7 +68,7 @@ let getCells = (document.getElementById("results").onclick = async () => {
             // tc = row.insertCell();
             // tc.innerText = "BCCH Message";
 
-            for (let i = 0; i < myJson.length; i++) {
+            for (let i = 0; i < myJson.length + 2; i++) {
                 let row = table.insertRow();
                 let cell = myJson.pop();
                 let tableCell = row.insertCell();

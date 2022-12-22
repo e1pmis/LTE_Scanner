@@ -12,12 +12,18 @@ class Plot {
             const parser = plotter.stdout.pipe(
                 new ReadlineParser({ delimiter: "\n" })
             );
+            plotter.stderr.on("data", (data) => console.log(data.toString()));
             parser.on("data", (data) => {
                 let line = data.toString();
+                console.log(line);
                 if (line.match("Server running")) {
                     this.port = line.match(/(\d+)/)[0];
-                    resolve(this.port);
-                    console.log(line)
+                    // resolve(this.port);
+                } else if (line.match("Server shutting down")) {
+                    console.log(line);
+                    plotter.kill();
+                    resolve();
+                    this.start();
                 }
             });
         });
