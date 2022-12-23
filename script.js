@@ -79,7 +79,7 @@ let getCells = (document.getElementById("results").onclick = async () => {
                 tableCell = row.insertCell();
                 tableCell.innerHTML = `<ul> <li>RNTI: ${cell.PDSCH.RNTI} </li> <li>Modulation: ${cell.PDSCH.Modulation}</li><li>Redundancy_Version: ${cell.PDSCH.Redundancy_Version}</li> <li>TransportBlock: ${cell.PDSCH.TransportBlock}</li></ul>`;
                 tableCell = row.insertCell();
-                tableCell.innerHTML = `<ul> <li>decodedID: ${cell.decodedID} </li> <li>MCC: ${cell.mcc}</li><li>MNC: ${cell.mnc}</li> <li>RxPowerLevel: ${cell.rxPowerLevel} dB</li></ul>`;
+                tableCell.innerHTML = `<ul> <li>decodedID: ${cell.decodedID} </li> <li>MCC: ${cell.mcc}</li><li>MNC: ${cell.mnc}</li> <li>qRxPowerLevel: ${cell.rxPowerLevel} dB</li></ul>`;
             }
         })
         .catch(function (error) {
