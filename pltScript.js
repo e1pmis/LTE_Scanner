@@ -16,21 +16,21 @@ var layout = {
     },
     yaxis: {
         title: "qRxLevMin dB",
-        showgrid: false,
+        showgrid: true,
         showline: false,
     },
     autosize: false,
-    width: 1150,
+    width: 1300,
     height: 500,
     margin: {
-      l: 50,
-      r: 50,
-      b: 100,
-      t: 100,
-      pad: 4
+        l: 100,
+        r: 100,
+        b: 100,
+        t: 100,
+        pad: 4,
     },
-    paper_bgcolor: "#ffffff",
-    // plot_bgcolor: "#c7c7c7"
+    paper_bgcolor: "#c8cbcf",
+    plot_bgcolor: "#f9f9f9",
 };
 
 const stream = rx.interval(1000).pipe(rx.map(pltCells));
@@ -40,11 +40,11 @@ function pltCells() {
             x: x,
             y: y,
             mode: "markers",
-            marker: { size: 16, color: "red", symbol: "cross" },
+            marker: { size: 16, color: "blue", symbol: "cross" },
             text: id,
             type: "scatter",
         },
-        {   
+        {
             x: [x[0]],
             y: [0],
             // marker: {
@@ -54,9 +54,8 @@ function pltCells() {
             //       color: "green",
             //       width: 0.5
             //     },
-            type: "scatter"
-          
-        }
+            type: "scatter",
+        },
     ];
     // let graphOptions = {
     //     layout: layout,
@@ -84,13 +83,21 @@ let check = () => {
                 return response.json();
             })
             .then(async function (myJson) {
+                if (myJson.length == 0) {
+                    x = [];
+                    y = [];
+                    id = [];
+                    cells = [];
+                }
                 if (myJson.length !== cells.length) {
                     // console.log(myJson[0]);
                     cells = myJson;
                     for (let cel of myJson) {
                         x.push(cel.frequency);
                         y.push(cel.rxPowerLevel);
-                        id.push(`Cell ID: ${cel.id}`);
+                        id.push(
+                            `Cell ID: ${cel.id}\t\n RBs: ${cel.mib.RBs}\t\n Provider: ${cel.provider}`
+                        );
                     }
                 }
                 check();

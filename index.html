@@ -2,133 +2,217 @@
 
 <head>
   <title>LTE Scanner</title>
-  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script> -->
+  <link rel="stylesheet" href="./style.css">
   <script type="module" src="./script.js"></script>
 </head>
 
-
-
 <body>
-  <div style="margin:100px;">
-    <nav class="navbar navbar-inverse navbar-static-top">
-      <div class="container">
-        <a class="navbar-brand" href="/">LTE Scanner</a>
-        <ul class="nav navbar-nav">
-          <li class="active">
-            <a href="/">Home</a>
+  <div class="table-wrapper">
+    <nav>
+      <div style="background: #1c1d22;">
+        <ul class="menu">
+          <li>
+            <a style='padding:  50px; font-size: 18px; color: rgb(228, 43, 43);text-decoration:none;' href="/">LTE
+              Scanner</a>
           </li>
           <li>
-            <a href="/plot">plot</a>
+            <a style='text-decoration:none;color:rgb(197, 197, 197);font-size: 14px;' href="/">Home</a>
           </li>
           <li>
-            <a href="/getCells">Cells.json</a>
+            <a style='text-decoration:none;color:rgb(197, 197, 197);font-size: 14px;' href="/plot">Plot</a>
           </li>
           <li>
-            <a href="/info">info</a>
+            <a style='text-decoration:none;color:rgb(197, 197, 197);font-size: 14px;' href="/getCells">Cells.json</a>
           </li>
           <li>
-            <a href="/imsi">IMSI</a>
+            <a style='text-decoration:none;color:rgb(197, 197, 197);font-size: 14px;' href="/info">Estimation</a>
           </li>
           <li>
-            <a href="/bands">LTE Bands </a>
+            <a style='text-decoration:none;color:rgb(197, 197, 197);font-size: 14px;' href="/saves">Saves</a>
+          </li>
+          <li>
+            <a style='text-decoration:none;color:rgb(197, 197, 197);font-size: 14px;' href="/imsi">IMSI</a>
+          </li>
+          <li>
+            <a style='text-decoration:none;color:rgb(197, 197, 197);font-size: 14px;' href="/bands">LTE Bands </a>
           </li>
         </ul>
       </div>
     </nav>
-    <form id="theForm" class="form" class="fieldset" action="/scan" method="POST">
+    <form id="theForm" action="/scan" method="POST">
       <p>
-      <table class="table" id="tt">
-        <tr>
-          <th>
-            <p>USRP parameters:</p>
-          </th>
-          <th>
-            <p></p>
-          </th>
-          <th>
-            <p>Scanner parameters:</p>
-          </th>
-          <th>
-            <p></p>
-          </th>
-          <th>
-            <p>Advanced parameters:</p>
-          </th>
-          <th>
-            <p></p>
-          </th>
-        </tr>
-        <tr>
-          <th>
-            <p><label for="noa">Number of antennas</label><br>
-              <label for="rxgain">Receiver gain</label><br>
-            </p>
-          </th>
-          <th>
-            <p>
-              <input name="noa" id="noa" type="text" value="2"></input><br>
-              <input name="rxgain" id="rxg" type="text" value="80"></input><br>
-            </p>
-          </th>
-
-          <th>
-            <p><label for="sf">Start frequency:</label><br>
-              <label for="step">Step</label><br>
-              <label for="ef">End frequency:</label><br>
-            </p>
-          </th>
-          <th>
-            <p>
-              <input name="sFreq" id="sf" type="text" value="796"><br>
-
-              <input name="step" id="st" type="text" value="1"><br>
-
-              <input name="eFreq" id="ef" type="text" value="-1"><br>
-            </p>
-          </th>
-          <th>
-            <p>
-              <label for="time">Time</label><br>
-              <label for="attemps">Attemps</label><br>
-            </p>
-          </th>
-          <th>
-            <p>
-              <input name="time" id="time" type="text" value="40"><br>
-
-              <input name="attemps" id="attemps" type="text" value="3"><br>
-            </p>
-          </th>
-        </tr>
-        <tr>
-          <th>
-            <p><input type="submit" value="Scan"></p>
-          </th>
-          <th>
-            <p><a id="reset" class="btn-group-lg" role="button">Reset</a></p>
-          </th>
-          <th>
-            <p><a id="results"  role="button"> </a></p>
-          </th>
-        </tr>
-        </p>
-      </table>
+      <div class="table-wrapper" style="margin: 30px">
+        <table class="fl-table" id="tt">
+          <tr style="background: #1c1d22;">
+            <th>
+              <p style="color: #ffffff;">USRP parameters:</p>
+            </th>
+            <th>
+              <p></p>
+            </th>
+            <th>
+              <p style="color: #ffffff;">Frequency parameters: (Mhz)</p>
+            </th>
+            <th>
+              <p></p>
+            </th>
+            <th>
+              <p style="color: #ffffff;">Advanced parameters:</p>
+            </th>
+            <th>
+              <p></p>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <dl>
+                <dt style="text-align: left; padding: 5px"><label for="noa">Number of antennas</label></dt>
+                <dt style="text-align: left;padding:5px"><label for="rxgain">Receiver gain</label></dt>
+              </dl>
+            </th>
+            <th>
+              <dl>
+                <dt style="text-align: left; padding:5px"><input name="noa" id="noa" type="text" value="2"></input></dt>
+                <dt style="text-align: left; padding:5px"><input name="rxgain" id="rxg" type="text" value="80"></input>
+                </dt>
+              </dl>
+            </th>
+            <th>
+              <dl>
+                <dt style="text-align: left; padding: 5px"><label for="sf">Start frequency</label></dt>
+                <dt style="text-align: left; padding: 5px"><label for="step">Step</label></dt>
+                <dt style="text-align: left; padding: 5px"><label for="ef">End frequency</label></dt>
+              </dl>
+            </th>
+            <th>
+              <dl>
+                <dt style="text-align: left; padding: 5px"><input name="sFreq" id="sf" type="text" value="796"></dt>
+                <dt style="text-align: left; padding: 5px"><input name="step" id="st" type="text" value="1"></dt>
+                <dt style="text-align: left;padding: 5px"><input name="eFreq" id="ef" type="text" value="-1"></dt>
+              </dl>
+            </th>
+            <th>
+              <dl>
+                <dt style="text-align: left;padding: 5px"><label for="time">Timeout in seconds</label></dt>
+                <dt style="text-align: left;padding: 5px"><label for="attemps">Attemps</label></dt>
+              </dl>
+            </th>
+            <th>
+              <dl>
+                <dt style="text-align: left;padding: 5px"><input name="time" id="time" type="text" value="40"></dt>
+                <dt style="text-align: left;padding: 5px"><input name="attemps" id="attemps" type="text" value="3"></dt>
+              </dl>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <button type="submit" href="javascript:void(0);">
+                Scan
+              </button>
+            </th>
+            <th>
+              <button id="reset" type="button" href="javascript:void(0);">
+                Reset
+              </button>
+            </th>
+          </tr>
+          </p>
+        </table>
+      </div>
       </p>
     </form>
-   
-    <div >
-      <table class="table" id="table">
-        <tr>
-          <th>Cell id</th>
-          <th>MIB</th>
-          <th>PDSCH</th>
-          <th>BCCH Message</th>
+
+    <div style="padding-left:50px">
+      <form id="theForm" action="/load" method="POST">
+        <button style="width: 100px;" type="submit" id='load' type="button">
+          Load/Save
+        </button>
+        <input name="load" id="load" type="text" placeholder="load id">
+        <input name="save" id="save" type="text" placeholder="save id">
+        <input type="checkbox" id="delete" name="delete">
+        <label for="delete">Delete!</label>
+      </form>
+    </div>
+    <!-- <form id="theForm" action="/scan" method="POST">
+      <p>
+      <div class="table-wrapper" style="margin: 30px">
+        <table class="fl-table" id="tt">
+          <tr style="background: #1c1d22;">
+            <th>
+              <p style="color: #ffffff;">Load/Save Data: </p>
+            </th>
+            <th>
+              <p></p>
+            </th>
+            <th>
+              <p style="color: #ffffff;"></p>
+            </th>
+            <th>
+              <p></p>
+            </th>
+            <th>
+              <p style="color: #ffffff;"></p>
+            </th>
+            <th>
+              <p></p>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <dl>
+                <dt style="text-align: left; padding: 5px"><label for="loadid">Load Data</label></dt>
+                <dt style="text-align: left;padding:5px"><label for="saveid">Save Data</label></dt>
+              </dl>
+            </th>
+            <th>
+              <dl>
+                <dt style="text-align: left; padding:5px"><input name="loadid" id="loadid" type="text" value=""></input></dt>
+                <dt style="text-align: left; padding:5px"><input name="saveid" id="saveid" type="text" value=""></input>
+                </dt>
+              </dl>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <button type="submit" href="javascript:void(0);">
+                Load
+              </button>
+            </th>
+            <th>
+              <button id="reset" type="button" href="javascript:void(0);">
+                Save
+              </button>
+            </th>
+          </tr>
+          </p>
+        </table>
+      </div>
+      </p>
+    </form> -->
+    <div class="table-wrapper" style="margin:auto;padding:  30px">
+      <table class="fl-table" id="table">
+        <tr class="table-row" class="header" style="background: #1c1d22;">
+          <th>
+            <p style="color: #ffffff;">Cell</p>
+          </th>
+          <th></th>
+          <th>
+            <p style="color: #ffffff;">MIB</p>
+          </th>
+          <th></th>
+          <th>
+            <p style="color: #ffffff;">PDSCH</p>
+          </th>
+          <th></th>
+          <th>
+            <p style="color: #ffffff;">BCCH Message</p>
+          </th>
+          <th></th>
         </tr>
       </table>
     </div>
+
   </div>
 </body>
+
 </html>

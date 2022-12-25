@@ -13,6 +13,7 @@ const Cell = class Cell {
         this.rxPowerLevel;
         this.mcc = "N/A";
         this.mnc = "N/A";
+        this.provider = "";
         this.decodedID = "N/A";
         this.mib = {
             Antennas: "nan",
@@ -91,7 +92,7 @@ class Scanner {
             ]);
             let timer = setTimeout(() => {
                 // console.log(`No cells detected on frequeny = ${frequency}`);
-                let date = new Date(); 
+                let date = new Date();
                 logger
                     .color("yellow")
                     .log(
@@ -288,6 +289,13 @@ class Scanner {
                         cell.mnc = bcch["mnc"];
                         cell.rxPowerLevel = bcch["rx"];
                         cell.decodedID = bcch["id"];
+                        if (cell.mnc == '01') {
+                            cell.provider = "Telekom";
+                        } else if (cell.mnc == '02') {
+                            cell.provider = "Vodafone";
+                        } else if (cell.mnc == '03') {
+                            cell.provider = "O2";
+                        }
                         logger
                             .color("green")
                             .log(

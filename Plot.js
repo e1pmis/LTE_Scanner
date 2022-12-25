@@ -15,12 +15,11 @@ class Plot {
             plotter.stderr.on("data", (data) => console.log(data.toString()));
             parser.on("data", (data) => {
                 let line = data.toString();
-                console.log(line);
                 if (line.match("Server running")) {
+                    console.log(line);
                     this.port = line.match(/(\d+)/)[0];
                     // resolve(this.port);
                 } else if (line.match("Server shutting down")) {
-                    console.log(line);
                     plotter.kill();
                     resolve();
                     this.start();
