@@ -1,16 +1,15 @@
 {
-  "name": "server",
+  "name": "lte_scanner",
   "version": "1.0.0",
   "description": "private",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Abdullah ALibrahim",
   "license": "ISC",
   "dependencies": {
     "@serialport/parser-readline": "^10.5.0",
-    "browserify-fs": "^1.0.0",
     "express": "^4.18.1",
     "hex-to-binary": "^1.0.1",
     "node-color-log": "^10.0.2",

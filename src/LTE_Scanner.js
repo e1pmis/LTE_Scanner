@@ -1,10 +1,14 @@
+/**
+ * This is the LTE Scanner class: 
+ * it builds the Cell objects based 2 main API's: ltedecoder and asn1 compiler.    
+ */
 const fs = require("fs");
-const hexToBinary = require("hex-to-binary");
 const { spawn, exec } = require("child_process");
 const { ReadlineParser } = require("@serialport/parser-readline");
 const { connected } = require("process");
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const logger = require("node-color-log");
+
 const Cell = class Cell {
     constructor() {
         this.id;
@@ -30,11 +34,13 @@ const Cell = class Cell {
         };
     }
 };
+
 class Scanner {
     constructor() {
         this.cells = [];
         this.frequencies = {};
     }
+
     async scan(scanObj) {
         return new Promise(async (resolve, reject) => {
             if (scanObj["eFreq"] == -1) {
@@ -91,7 +97,6 @@ class Scanner {
                 `-g ${rxgain}`,
             ]);
             let timer = setTimeout(() => {
-                // console.log(`No cells detected on frequeny = ${frequency}`);
                 let date = new Date();
                 logger
                     .color("yellow")
@@ -111,7 +116,6 @@ class Scanner {
             }, time * 1000);
 
             ltedecode.stderr.on("data", (data) => {
-                // console.error(`ltedecode stderr: ${data}`);
             });
 
             const parser = ltedecode.stdout.pipe(
@@ -156,7 +160,6 @@ class Scanner {
                     if (hexArr.length != 0) {
                         let block = "";
                         ltedecode.stdout.unpipe();
-                        // console.log(hexArr);
                         for (let line of hexArr) {
                             block = block + line;
                         }
@@ -187,9 +190,6 @@ class Scanner {
         });
     }
     async isValid(cell, noa, rxgain, frequency, attemps, time, res) {
-        // console.log(
-        //     `Cell detected on frequency = ${frequency} , Cell ID = ${cell.id}`
-        // );
         let date = new Date();
         logger
             .color("green")
@@ -199,7 +199,6 @@ class Scanner {
                 }`
             );
 
-        // let decoded = await this.asn1(cell);
         if ((await this.asn1(cell)) == 1) {
             if (!(await this.exist(cell))) {
                 this.cells.push(cell);
@@ -263,25 +262,18 @@ class Scanner {
                 );
 
             try {
-                fs.writeFileSync("tmp_sib1.hex", cell.PDSCH.TransportBlock);
+                fs.writeFileSync("./var/tmp_sib1.hex", cell.PDSCH.TransportBlock);
             } catch (err) {
                 console.log(err);
             }
 
             exec(
-                `xxd -r -p tmp_sib1.hex bin.per`,
+                `xxd -r -p ./var/tmp_sib1.hex ./var/bin.per`,
                 async (err, stdout, stderr) => {}
             );
             exec(
-                `asn1_test/LTE-BCCH-DL-SCH-decode/progname bin.per -p BCCH-DL-SCH-Message`,
+                `asn1_test/LTE-BCCH-DL-SCH-decode/progname ./var/bin.per -p BCCH-DL-SCH-Message`,
                 async (err, stdout, stderr) => {
-                    // if (stderr) {
-                    //     console.log(stderr);
-                    // }
-                    // if (err) {
-                    //     console.log(err);
-                    // }
-
                     let date = new Date();
                     if (stdout.match("<plmn-Identity>")) {
                         let bcch = await bcchParser(stdout);

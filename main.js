@@ -1,20 +1,24 @@
+/**
+ * App start point.
+ * This is the http server app for LTE Scanner:
+ * It handels the http protocol Get/Post requests.
+ * Turns server on/off.
+ * Uses the main classes LTE_Scanner.js and Plot.js
+ */
+
 const express = require("express");
 const logger = require("node-color-log");
 let date = new Date();
-var cp = require("child_process");
+const cp = require("child_process");
 const cellsTest = require("./saves.json");
-const Scanner = require("./LTE_Scanner");
+const Scanner = require("./src/LTE_Scanner");
 let scanner = new Scanner();
 const app = express();
 const path = require("path");
 const router = express.Router();
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// app.use(bodyParser.raw());
-let Plot = require("./Plot");
+let Plot = require("./src/Plot");
 const { loadavg } = require("os");
 let plt = new Plot();
 
@@ -29,14 +33,14 @@ async function startPlotter() {
 }
 startPlotter();
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 router.get("/", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/index.html"));
-});
-router.get("/log", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/client.html"));
+    res.sendFile(path.join(__dirname + "/src/index.html"));
 });
 router.get("/style.css", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/style.css"));
+    res.sendFile(path.join(__dirname + "/src/style.css"));
 });
 router.get("/img/Vodafone.gif", async function (req, res) {
     res.sendFile(path.join(__dirname + "/img/Vodafone.gif"));
@@ -47,14 +51,18 @@ router.get("/img/O2.gif", async function (req, res) {
 router.get("/img/Telekom.gif", async function (req, res) {
     res.sendFile(path.join(__dirname + "/img/Telekom.gif"));
 });
+router.get("/img/D.gif", async function (req, res) {
+    res.sendFile(path.join(__dirname + "/img/D.gif"));
+});
+router.get("/img/smta.gif", async function (req, res) {
+    res.sendFile(path.join(__dirname + "/img/smta.gif"));
+});
+router.get("/img/smta.css", async function (req, res) {
+    res.sendFile(path.join(__dirname + "/img/smta.css"));
+});
 
 router.get("/bands", async function (req, res) {
-    res.sendFile(
-        path.join(
-            __dirname +
-                "/Global Mobile Frequencies Database by Spectrummonitoring.com.html"
-        )
-    );
+    res.sendFile(path.join(__dirname + "/src/LTE-Bands.html"));
 });
 router.get("/plot", async function (req, res) {
     res.send(
@@ -69,7 +77,7 @@ router.get("/plot", async function (req, res) {
     );
 });
 router.get("/imsi", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/IMSI_zug.Bloecke.pdf"));
+    res.sendFile(path.join(__dirname + "/src/IMSI_zug.Bloecke.pdf"));
 });
 
 router.get("/getCells", async function (req, res) {
@@ -85,50 +93,13 @@ router.get("/reset", async function (req, res) {
 });
 
 router.get("/script.js", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/script.js"));
+    res.sendFile(path.join(__dirname + "/src/script.js"));
 });
 router.get("/saves", async function (req, res) {
     res.sendFile(path.join(__dirname + "/saves.json"));
 });
 
-router.get("/msg", function (req, res) {
-    res.writeHead(200, {
-        "Content-Type": "text/event-stream",
-        "Cache-control": "no-cache",
-    });
-
-    var spw = cp.spawn("ping", ["-c", "100", "127.0.0.1"]),
-        str = "";
-
-    process.stdout.on("data", function (data) {
-        str += data.toString();
-
-        // just so we can see the server is doing something
-        // console.log("data");
-
-        // Flush out line by line.
-        var lines = str.split("\n");
-        for (var i in lines) {
-            if (i == lines.length - 1) {
-                str = lines[i];
-            } else {
-                // Note: The double-newline is *required*
-                res.write("data: " + lines[i] + "\n\n");
-            }
-        }
-    });
-
-    spw.on("close", function (code) {
-        res.end(str);
-    });
-
-    spw.stderr.on("data", function (data) {
-        res.end("stderr: " + data);
-    });
-});
-
 router.post("/load", async function requestHandler(req, res) {
-    // console.log(req.body)
     if (req.body["load"]) {
         if (!cells[req.body["load"]]) {
             res.send(
@@ -168,20 +139,17 @@ router.post("/load", async function requestHandler(req, res) {
 
 router.post("/scan", async function requestHandler(req, res) {
     let date = new Date();
-    // console.log(req.body)
     if (!BUSY) {
         BUSY = true;
         let result = await scanner.scan(req.body);
         if (result == "done") {
             BUSY = false;
-            // res.sendFile(path.join(__dirname + "/index.html"));
             res.send(
                 '<script>alert("Scaning has been sucessfully completed"); window.location.href = "./"; </script>'
             );
             res.end();
         } else {
             BUSY = false;
-            // res.sendFile(path.join(__dirname + "/index.html"));
             res.send(
                 '<script>alert("Something went wrong!!"); window.location.href = "./"; </script>'
             );
@@ -193,7 +161,6 @@ router.post("/scan", async function requestHandler(req, res) {
             .log(
                 `\n${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} The scanner is busy!`
             );
-        // res.sendFile(path.join(__dirname + "/index.html"));
         res.send(
             '<script>alert("Scanner is busy!"); window.location.href = "./"; </script>'
         );

@@ -8,7 +8,7 @@ class Plot {
     }
     start() {
         return new Promise(async (resolve, reject) => {
-            const plotter = spawn("node", ["pltScript.js"]);
+            const plotter = spawn("node", ["./src/pltScript.js"]);
             const parser = plotter.stdout.pipe(
                 new ReadlineParser({ delimiter: "\n" })
             );
@@ -18,7 +18,6 @@ class Plot {
                 if (line.match("Server running")) {
                     console.log(line);
                     this.port = line.match(/(\d+)/)[0];
-                    // resolve(this.port);
                 } else if (line.match("Server shutting down")) {
                     plotter.kill();
                     resolve();

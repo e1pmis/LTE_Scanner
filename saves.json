@@ -1,1 +1,353 @@
-{"kit":[{"type":"FDD","mcc":"262","mnc":"03","provider":"O2","decodedID":23088643,"mib":{"Antennas":"2","RBs":"50","FN":"708","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"0","TransportBlock":"48498807e8ee1604e03821311081044c24d9c1524a80c0303200"},"frequency":"796","id":"319","rxPowerLevel":"-70"},{"type":"FDD","mcc":"262","mnc":"02","provider":"Vodafone","decodedID":53576962,"mib":{"Antennas":"2","RBs":"50","FN":"736","PHICH_duration":"One","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498805b876331850281d318081842c2261238b8000"},"frequency":806,"id":"235","rxPowerLevel":"-63"},{"type":"FDD","mcc":"262","mnc":"01","provider":"Telekom","decodedID":29421071,"mib":{"Antennas":"2","RBs":"50","FN":"624","PHICH_duration":"One","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"4849880367bb1c0ee0f825309081045a182a4950180606400000"},"frequency":816,"id":"116","rxPowerLevel":"-61"},{"type":"FDD","mcc":"262","mnc":"03","provider":"O2","decodedID":23088409,"mib":{"Antennas":"2","RBs":"50","FN":"1016","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498807e8ee1604d17821311081044c24d8c1524a80c0303200"},"frequency":"796","id":"319","rxPowerLevel":"-80"},{"type":"FDD","mcc":"262","mnc":"02","provider":"Vodafone","decodedID":23088666,"mib":{"Antennas":"2","RBs":"50","FN":"1016","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498807e8ee1604d17821311081044c24d8c1524a80c0303200"},"frequency":"800","id":"117","rxPowerLevel":"-55"},{"type":"FDD","mcc":"262","mnc":"01","provider":"Telekom","decodedID":23088777,"mib":{"Antennas":"2","RBs":"50","FN":"1016","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498807e8ee1604d17821311081044c24d8c1524a80c0303200"},"frequency":"813","id":"555","rxPowerLevel":"-40"}],"test":[{"type":"FDD","mcc":"262","mnc":"03","provider":"O2","decodedID":23088643,"mib":{"Antennas":"2","RBs":"50","FN":"708","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"0","TransportBlock":"48498807e8ee1604e03821311081044c24d9c1524a80c0303200"},"frequency":"796","id":"319","rxPowerLevel":"-70"},{"type":"FDD","mcc":"262","mnc":"02","provider":"Vodafone","decodedID":53576962,"mib":{"Antennas":"2","RBs":"50","FN":"736","PHICH_duration":"One","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498805b876331850281d318081842c2261238b8000"},"frequency":806,"id":"235","rxPowerLevel":"-63"},{"type":"FDD","mcc":"262","mnc":"01","provider":"Telekom","decodedID":29421071,"mib":{"Antennas":"2","RBs":"50","FN":"624","PHICH_duration":"One","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"4849880367bb1c0ee0f825309081045a182a4950180606400000"},"frequency":816,"id":"116","rxPowerLevel":"-61"},{"type":"FDD","mcc":"262","mnc":"03","provider":"O2","decodedID":23088409,"mib":{"Antennas":"2","RBs":"50","FN":"1016","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498807e8ee1604d17821311081044c24d8c1524a80c0303200"},"frequency":"796","id":"319","rxPowerLevel":"-80"},{"type":"FDD","mcc":"262","mnc":"02","provider":"Vodafone","decodedID":23088666,"mib":{"Antennas":"2","RBs":"50","FN":"1016","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498807e8ee1604d17821311081044c24d8c1524a80c0303200"},"frequency":"800","id":"117","rxPowerLevel":"-55"},{"type":"FDD","mcc":"262","mnc":"01","provider":"Telekom","decodedID":23088777,"mib":{"Antennas":"2","RBs":"50","FN":"1016","PHICH_duration":"Half","Ng":"nan"},"PDSCH":{"RNTI":"65535","Modulation":"2","Redundancy_Version":"2","TransportBlock":"48498807e8ee1604d17821311081044c24d8c1524a80c0303200"},"frequency":"813","id":"555","rxPowerLevel":"-40"}]}
+{
+    "kit": [
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "03",
+            "provider": "O2",
+            "decodedID": 23088643,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "708",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "0",
+                "TransportBlock": "48498807e8ee1604e03821311081044c24d9c1524a80c0303200"
+            },
+            "frequency": "796",
+            "id": "319",
+            "rxPowerLevel": "-70"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "02",
+            "provider": "Vodafone",
+            "decodedID": 53576962,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "736",
+                "PHICH_duration": "One",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498805b876331850281d318081842c2261238b8000"
+            },
+            "frequency": 806,
+            "id": "235",
+            "rxPowerLevel": "-63"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "01",
+            "provider": "Telekom",
+            "decodedID": 29421071,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "624",
+                "PHICH_duration": "One",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "4849880367bb1c0ee0f825309081045a182a4950180606400000"
+            },
+            "frequency": 816,
+            "id": "116",
+            "rxPowerLevel": "-61"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "03",
+            "provider": "O2",
+            "decodedID": 23088409,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "1016",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498807e8ee1604d17821311081044c24d8c1524a80c0303200"
+            },
+            "frequency": "796",
+            "id": "319",
+            "rxPowerLevel": "-80"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "02",
+            "provider": "Vodafone",
+            "decodedID": 23088666,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "1016",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498807e8ee1604d17821311081044c24d8c1524a80c0303200"
+            },
+            "frequency": "800",
+            "id": "117",
+            "rxPowerLevel": "-55"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "01",
+            "provider": "Telekom",
+            "decodedID": 23088777,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "1016",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498807e8ee1604d17821311081044c24d8c1524a80c0303200"
+            },
+            "frequency": "813",
+            "id": "555",
+            "rxPowerLevel": "-40"
+        }
+    ],
+    "test": [
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "03",
+            "provider": "O2",
+            "decodedID": 23088643,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "708",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "0",
+                "TransportBlock": "48498807e8ee1604e03821311081044c24d9c1524a80c0303200"
+            },
+            "frequency": "796",
+            "id": "319",
+            "rxPowerLevel": "-70"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "02",
+            "provider": "Vodafone",
+            "decodedID": 53576962,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "736",
+                "PHICH_duration": "One",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498805b876331850281d318081842c2261238b8000"
+            },
+            "frequency": 806,
+            "id": "235",
+            "rxPowerLevel": "-63"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "01",
+            "provider": "Telekom",
+            "decodedID": 29421071,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "624",
+                "PHICH_duration": "One",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "4849880367bb1c0ee0f825309081045a182a4950180606400000"
+            },
+            "frequency": 816,
+            "id": "116",
+            "rxPowerLevel": "-61"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "03",
+            "provider": "O2",
+            "decodedID": 23088409,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "1016",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498807e8ee1604d17821311081044c24d8c1524a80c0303200"
+            },
+            "frequency": "796",
+            "id": "319",
+            "rxPowerLevel": "-80"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "02",
+            "provider": "Vodafone",
+            "decodedID": 23088666,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "1016",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498807e8ee1604d17821311081044c24d8c1524a80c0303200"
+            },
+            "frequency": "800",
+            "id": "117",
+            "rxPowerLevel": "-55"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "01",
+            "provider": "Telekom",
+            "decodedID": 23088777,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "1016",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498807e8ee1604d17821311081044c24d8c1524a80c0303200"
+            },
+            "frequency": "813",
+            "id": "555",
+            "rxPowerLevel": "-40"
+        }
+    ],
+    "band800": [
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "02",
+            "provider": "Vodafone",
+            "decodedID": 53576962,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "920",
+                "PHICH_duration": "One",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "2",
+                "TransportBlock": "48498805b876331850281d318081842c226123938000"
+            },
+            "frequency": "806",
+            "id": "235",
+            "rxPowerLevel": "-63"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "03",
+            "provider": "O2",
+            "decodedID": 23088407,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "460",
+                "PHICH_duration": "Half",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "0",
+                "TransportBlock": "48498807e8ee1604d17821311081044c24c4c1524a80c0303200"
+            },
+            "frequency": 796,
+            "id": "310",
+            "rxPowerLevel": "-70"
+        },
+        {
+            "type": "FDD",
+            "mcc": "262",
+            "mnc": "01",
+            "provider": "Telekom",
+            "decodedID": 29421071,
+            "mib": {
+                "Antennas": "2",
+                "RBs": "50",
+                "FN": "764",
+                "PHICH_duration": "One",
+                "Ng": "nan"
+            },
+            "PDSCH": {
+                "RNTI": "65535",
+                "Modulation": "2",
+                "Redundancy_Version": "1",
+                "TransportBlock": "4849880367bb1c0ee0f825309081045ad82a4950180606400000"
+            },
+            "frequency": 816,
+            "id": "116",
+            "rxPowerLevel": "-61"
+        }
+    ]
+}

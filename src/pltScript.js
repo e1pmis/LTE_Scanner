@@ -1,6 +1,5 @@
 let plt = require("nodeplotlib");
 let rx = require("rxjs");
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let x = [];
 let y = [];
@@ -47,38 +46,16 @@ function pltCells() {
         {
             x: [x[0]],
             y: [0],
-            // marker: {
-            //     color: "rgb(255, 217, 102)",
-            //     size: 12,
-            //     line: {
-            //       color: "green",
-            //       width: 0.5
-            //     },
             type: "scatter",
         },
     ];
-    // let graphOptions = {
-    //     layout: layout,
-    //     filename: "bubblechart",
-    //     fileopt: "overwrite",
-    // };
     return data;
 }
 plt.plot(stream, layout);
 
-// const data = [
-//     {
-//         x: x,
-//         y: y,
-//         mode: "markers",
-//         marker: {size:16 , color: 'red'},
-//         text: id,
-//         type: "scatter",
-//     },
-// ];
 let check = () => {
     setTimeout(async () => {
-        fetch("http://192.168.0.103:2250/getCells")
+        fetch("http://localhost:2250/getCells")
             .then(function (response) {
                 return response.json();
             })
@@ -90,7 +67,6 @@ let check = () => {
                     cells = [];
                 }
                 if (myJson.length !== cells.length) {
-                    // console.log(myJson[0]);
                     cells = myJson;
                     for (let cel of myJson) {
                         x.push(cel.frequency);

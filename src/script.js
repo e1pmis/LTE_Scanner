@@ -8,8 +8,6 @@ let getCells = (document.getElementById("table").onclick = () => {
             return response.json();
         })
         .then(function (myJson) {
-            // console.log(myJson.length);
-
             const table = document.getElementById("table");
 
             let tableRows = table.getElementsByTagName("tr");
@@ -20,17 +18,6 @@ let getCells = (document.getElementById("table").onclick = () => {
             for (let x = rowCount - 1; x > 0; x--) {
                 table.deleteRow(x);
             }
-
-            // let row = table.insertRow();
-            // let tc = row.insertCell();
-            // tc.innerText = "Cell";
-            // tc = row.insertCell();
-            // tc.innerText = "MIB";
-            // tc = row.insertCell();
-            // tc.innerText = "PDSCH";
-            // tc = row.insertCell();
-            // tc.innerText = "BCCH Message";
-
             for (let cell of myJson) {
                 let row = table.insertRow();
                 let tableCell = row.insertCell();
@@ -64,9 +51,6 @@ let check = () => {
             })
             .then(function (myJson) {
                 if (myJson.length !== cells.length) {
-                    // const button = document.getElementById("results");
-                    // button.innerText = "Show results!";
-                    // button.style.color = "green";
                     cells = myJson;
                     getCells();
                 }
