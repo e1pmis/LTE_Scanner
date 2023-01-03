@@ -80,7 +80,7 @@ router.get("/imsi", async function (req, res) {
     res.sendFile(path.join(__dirname + "/src/IMSI_zug.Bloecke.pdf"));
 });
 router.get("/doc", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/LTE_Scanner_Documentatiton.pdf"));
+    res.sendFile(path.join(__dirname + "/home/ibra/LTE_Scanner/LTE_Scanner_Documentatiton.pdf"));
 });
 
 router.get("/getCells", async function (req, res) {
