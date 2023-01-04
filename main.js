@@ -20,6 +20,8 @@ const bodyParser = require("body-parser");
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let Plot = require("./src/Plot");
 const { loadavg } = require("os");
+const open = require('open');
+
 let plt = new Plot();
 
 let cells = cellsTest;
@@ -80,7 +82,7 @@ router.get("/imsi", async function (req, res) {
     res.sendFile(path.join(__dirname + "/src/IMSI_zug.Bloecke.pdf"));
 });
 router.get("/doc", async function (req, res) {
-    res.sendFile(path.join(__dirname + "/home/ibra/LTE_Scanner/LTE_Scanner_Documentatiton.pdf"));
+    res.sendFile(path.join(__dirname + "/LTE_Scanner_Documentatiton.pdf"));
 });
 
 router.get("/getCells", async function (req, res) {
@@ -179,3 +181,4 @@ logger
     .log(
         `\n${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} LTE_Scanner is runing on port: http://localhost:${PORT}`
     );
+    open(`http://localhost:${PORT}`);
