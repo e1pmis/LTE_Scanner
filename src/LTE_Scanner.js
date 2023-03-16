@@ -1,6 +1,7 @@
+
 /**
- * This is the LTE Scanner class: 
- * it builds the Cell objects based 2 main API's: ltedecoder and asn1 compiler.    
+ * This is the LTE Scanner class:
+ * it builds the Cell objects based 2 main API's: ltedecoder and asn1 compiler.
  */
 const fs = require("fs");
 const { spawn, exec } = require("child_process");
@@ -115,8 +116,7 @@ class Scanner {
                 }
             }, time * 1000);
 
-            ltedecode.stderr.on("data", (data) => {
-            });
+            ltedecode.stderr.on("data", (data) => {});
 
             const parser = ltedecode.stdout.pipe(
                 new ReadlineParser({ delimiter: "\n" })
@@ -262,7 +262,10 @@ class Scanner {
                 );
 
             try {
-                fs.writeFileSync("./var/tmp_sib1.hex", cell.PDSCH.TransportBlock);
+                fs.writeFileSync(
+                    "./var/tmp_sib1.hex",
+                    cell.PDSCH.TransportBlock
+                );
             } catch (err) {
                 console.log(err);
             }
@@ -281,11 +284,11 @@ class Scanner {
                         cell.mnc = bcch["mnc"];
                         cell.rxPowerLevel = bcch["rx"];
                         cell.decodedID = bcch["id"];
-                        if (cell.mnc == '01') {
+                        if (cell.mnc == "01") {
                             cell.provider = "Telekom";
-                        } else if (cell.mnc == '02') {
+                        } else if (cell.mnc == "02") {
                             cell.provider = "Vodafone";
-                        } else if (cell.mnc == '03') {
+                        } else if (cell.mnc == "03") {
                             cell.provider = "O2";
                         }
                         logger
@@ -309,14 +312,16 @@ class Scanner {
     }
 
     estimate(frequency, id) {
-        if (this.frequencies[`${frequency}`]) {
-            if (this.frequencies[`${frequency}`].includes(`${id}`)) {
-                return;
+        if (frequency != null) {
+            if (`${frequency}` in this.frequencies) {
+                if (this.frequencies[`${frequency}`].includes(`${id}`)){
+                    return;
+                } else {
+                    this.frequencies[`${frequency}`].push(id);
+                }
             } else {
-                this.frequencies[`${frequency}`].push(id);
+                this.frequencies[`${frequency}`] = [id];
             }
-        } else {
-            this.frequencies[`${frequency}`] = [id];
         }
     }
 }
